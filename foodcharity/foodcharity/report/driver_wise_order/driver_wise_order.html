@@ -1,0 +1,80 @@
+    <style>
+        .bordered-box {
+            border: 1px solid #ccc;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+            padding: 15px;
+        }
+        .empty-box {
+            border: 1px solid #131212;
+            padding: 15px;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+        .page-footer {
+            display: flex;
+            justify-content: space-between;
+            padding-top: 10px;
+            border-top: 1px solid #ddd;
+        }
+    </style>
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-4">
+                <div class="bordered-box">
+                    <h4>
+                        {%= filters.assigned_volunteer %} <br>
+                        {%= data[0].volunteer_name %}<br>
+                        {%= data[0].volunteer_mobile %}
+                    </h4>
+                </div>
+            </div>
+            <div class="col-xs-4">
+                <h2 class="text-center">{%= __("MILESTONE MANIYUR - BIRIYANI CHALLENGE") %}</h2>
+            </div>
+            <div class="col-xs-4">
+                <div class="empty-box">
+                    <p>Priority</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <hr>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th style="width: 12%">{%= __("Job ID") %}</th>
+                <th style="width: 25%">{%= __("Full Name") %}</th>
+                <th style="width: 10%">{%= __("Mobile") %}</th>
+                <th style="width: 15%">{%= __("Area") %}</th>
+                <th style="width: 10%">{%= __("Area Details Z - S - B") %}</th>
+                <th style="width: 10%">{%= __("No of Biriyani") %}</th>
+                <th style="width: 10%">{%= __("Cost") %}</th>
+                <th style="width: 20%">{%= __("Extra Amount") %}</th>
+                <th style="width: 20%">{%= __("Remark") %}</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for (var i = 0, l = data.length; i < l; i++) { %}
+                <tr>
+                    <td>{%= data[i].job_id %}</td>
+                    <td>{%= data[i].job_name %}</td>
+                    <td>{%= data[i].job_mobile %}</td>
+                    <td>{%= data[i].job_area %}</td>
+                    <td>{%= data[i].job_zone %}  {%= data[i].street_number %}  {%= data[i].job_build %} {%= data[i].compound_name %}</td>
+                    <td>{%= data[i].job_no %}</td>
+                    <td style="text-align: right">
+                        {%= format_currency(data[i].totalcost, filters.presentation_currency) %}
+                    </td>
+                    <td></td>
+                    <td></td>
+                </tr>
+            {% } %}
+        </tbody>
+    
+    </table>

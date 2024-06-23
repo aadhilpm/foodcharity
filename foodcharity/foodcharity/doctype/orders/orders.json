@@ -1,0 +1,185 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "format:J-{####}",
+ "creation": "2024-04-23 15:10:46.228817",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "name1",
+  "mobile",
+  "column_break_eqju",
+  "assigned_volunteer",
+  "contact_number",
+  "whatsapp_number",
+  "section_break_lnin",
+  "no_of_biriyani",
+  "column_break_aadt",
+  "delivery_needed",
+  "section_break_tmlu",
+  "accommodation_area",
+  "if_other",
+  "zone_number",
+  "door_number",
+  "column_break_wquh",
+  "street_number",
+  "building_number",
+  "accommodation_type",
+  "compound_name"
+ ],
+ "fields": [
+  {
+   "fieldname": "name1",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Name",
+   "reqd": 1
+  },
+  {
+   "description": "Contact Number (Primary)",
+   "fieldname": "mobile",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Mobile",
+   "reqd": 1
+  },
+  {
+   "description": "Secondary",
+   "fieldname": "contact_number",
+   "fieldtype": "Data",
+   "label": "Contact Number"
+  },
+  {
+   "fieldname": "whatsapp_number",
+   "fieldtype": "Data",
+   "label": "Whatsapp Number",
+   "reqd": 1
+  },
+  {
+   "fieldname": "no_of_biriyani",
+   "fieldtype": "Int",
+   "label": "No of Biriyani",
+   "non_negative": 1,
+   "reqd": 1
+  },
+  {
+   "fieldname": "delivery_needed",
+   "fieldtype": "Select",
+   "label": "Delivery Needed",
+   "options": "\nYes\nNo",
+   "reqd": 1
+  },
+  {
+   "depends_on": "eval:doc.delivery_needed ==\"Yes\"",
+   "fieldname": "section_break_tmlu",
+   "fieldtype": "Section Break",
+   "label": "Delivery Information"
+  },
+  {
+   "fieldname": "accommodation_area",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Accommodation Area",
+   "mandatory_depends_on": "eval:doc.delivery_needed ==\"Yes\"",
+   "options": "\nAl Khor\nAl Sadd\nAl Waab\nAl Kheesa\nAbu Hamour\nAzeeziya\nAin Khaled\nBin Omran\nBin Mahmoud\nBarwa City\nBarwa Madinatna\nDafna\nDoha Jadidh\nDukhan\nDuhail\nFereej Al Soudan\nFereej Abdul Aziz\nGarrafa\nHilal\nIndustrial Area\nIzghawa\nLusail\nMadina Khalifa North\nMadina Khalifa South\nMansoora\nMarkhiya\nMathar Qadeem\nMaamoura\nMesaimeer\nMsheireb\nMuaither\nMughalina\nMunthaza\nNajma\nNew Rayyan\nNew Salatah\nNuaija\nOld Rayyan\nOld Salatah\nRas Laffan\nThumama\nUmm Sa'id\nUmm Salal Ali\nUmm Salal Muhammad\nWakrah\nWukair\nOther"
+  },
+  {
+   "fieldname": "column_break_eqju",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "zone_number",
+   "fieldtype": "Data",
+   "label": "Zone Number",
+   "non_negative": 1,
+   "print_hide": 1,
+   "print_hide_if_no_value": 1
+  },
+  {
+   "fieldname": "street_number",
+   "fieldtype": "Data",
+   "label": "Street Number",
+   "non_negative": 1
+  },
+  {
+   "fieldname": "building_number",
+   "fieldtype": "Data",
+   "label": "Building Number",
+   "non_negative": 1
+  },
+  {
+   "fieldname": "door_number",
+   "fieldtype": "Data",
+   "label": "Door Number"
+  },
+  {
+   "fieldname": "accommodation_type",
+   "fieldtype": "Select",
+   "label": "Accommodation Type",
+   "options": "\nFlat\nVilla Compound\nIndependent Villa"
+  },
+  {
+   "fieldname": "column_break_wquh",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "section_break_lnin",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "column_break_aadt",
+   "fieldtype": "Column Break"
+  },
+  {
+   "depends_on": "eval:doc.accommodation_type == \"Villa Compound\"",
+   "description": "Example: Ezdan 20, Barwa etc...",
+   "fieldname": "compound_name",
+   "fieldtype": "Data",
+   "label": "Compound Name",
+   "mandatory_depends_on": "eval:doc.accommodation_type == \"Villa Compound\""
+  },
+  {
+   "depends_on": "eval:doc.accommodation_area ==\"Other\"",
+   "fieldname": "if_other",
+   "fieldtype": "Data",
+   "label": "If Other"
+  },
+  {
+   "fieldname": "assigned_volunteer",
+   "fieldtype": "Link",
+   "in_standard_filter": 1,
+   "label": "Assigned Volunteer",
+   "options": "Volunteer"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2024-05-16 17:24:11.696428",
+ "modified_by": "Administrator",
+ "module": "Foodcharity",
+ "name": "Orders",
+ "naming_rule": "Expression",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "quick_entry": 1,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1
+}

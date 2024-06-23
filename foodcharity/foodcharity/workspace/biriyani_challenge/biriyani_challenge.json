@@ -1,0 +1,70 @@
+{
+ "charts": [],
+ "content": "[{\"id\":\"-MNnwIqXWo\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"No. Of Orders\",\"col\":3}},{\"id\":\"Qr10j60v_w\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"Orders Assigned to Volunteers\",\"col\":3}},{\"id\":\"VIATEnMMaK\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"w4Ybld1XkL\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Orders\",\"col\":3}},{\"id\":\"zJDvhkX9aA\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Driver Wise Priority\",\"col\":3}},{\"id\":\"0H-dlsKHL8\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Driver Wise Order\",\"col\":3}},{\"id\":\"ScA_i_8GBi\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Volunteer\",\"col\":3}}]",
+ "creation": "2024-05-23 10:21:28.832274",
+ "custom_blocks": [],
+ "docstatus": 0,
+ "doctype": "Workspace",
+ "for_user": "",
+ "hide_custom": 0,
+ "icon": "drag-sm",
+ "idx": 1,
+ "indicator_color": "green",
+ "is_hidden": 0,
+ "label": "Biriyani Challenge",
+ "links": [],
+ "modified": "2024-05-23 10:34:53.162281",
+ "modified_by": "Administrator",
+ "module": "Foodcharity",
+ "name": "Biriyani Challenge",
+ "number_cards": [
+  {
+   "label": "No. Of Orders",
+   "number_card_name": "No. Of Orders"
+  },
+  {
+   "label": "Orders Assigned to Volunteers",
+   "number_card_name": "Orders Assigned to Volunteers"
+  }
+ ],
+ "owner": "Administrator",
+ "parent_page": "",
+ "public": 1,
+ "quick_lists": [],
+ "restrict_to_domain": "",
+ "roles": [],
+ "sequence_id": 27.1,
+ "shortcuts": [
+  {
+   "color": "Grey",
+   "doc_view": "List",
+   "label": "Orders",
+   "link_to": "Orders",
+   "stats_filter": "[]",
+   "type": "DocType"
+  },
+  {
+   "color": "Grey",
+   "doc_view": "List",
+   "label": "Driver Wise Priority",
+   "link_to": "Driver Wise",
+   "type": "Report"
+  },
+  {
+   "color": "Grey",
+   "doc_view": "List",
+   "label": "Driver Wise Order",
+   "link_to": "Driver wise order",
+   "type": "Report"
+  },
+  {
+   "color": "Grey",
+   "doc_view": "List",
+   "label": "Volunteer",
+   "link_to": "Volunteer",
+   "stats_filter": "[]",
+   "type": "DocType"
+  }
+ ],
+ "title": "Biriyani Challenge"
+}

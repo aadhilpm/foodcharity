@@ -1,0 +1,28 @@
+{
+ "add_total_row": 0,
+ "columns": [],
+ "creation": "2024-05-16 23:45:01.813641",
+ "disabled": 0,
+ "docstatus": 0,
+ "doctype": "Report",
+ "filters": [],
+ "idx": 0,
+ "is_standard": "Yes",
+ "letter_head": "Default",
+ "letterhead": null,
+ "modified": "2024-05-23 10:14:42.459446",
+ "modified_by": "Administrator",
+ "module": "Foodcharity",
+ "name": "Driver Wise",
+ "owner": "Administrator",
+ "prepared_report": 0,
+ "query": "SELECT\n    o.assigned_volunteer,\n    v.full_name AS volunteer_name,\n    COUNT(*) AS volunteer_order_count,\n    SUM(o.no_of_biriyani) AS total_biriyani\nFROM\n    `tabOrders` o\nLEFT JOIN\n    `tabVolunteer` v ON o.assigned_volunteer = v.name\nGROUP BY\n    o.assigned_volunteer, v.full_name;",
+ "ref_doctype": "Orders",
+ "report_name": "Driver Wise",
+ "report_type": "Query Report",
+ "roles": [
+  {
+   "role": "System Manager"
+  }
+ ]
+}
