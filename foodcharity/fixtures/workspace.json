@@ -1,0 +1,108 @@
+[
+ {
+  "charts": [],
+  "content": "[{\"id\":\"-MNnwIqXWo\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"No. Of Orders\",\"col\":3}},{\"id\":\"Qr10j60v_w\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"Orders Assigned to Volunteers\",\"col\":3}},{\"id\":\"VIATEnMMaK\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"w4Ybld1XkL\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Orders\",\"col\":3}},{\"id\":\"zJDvhkX9aA\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Driver Wise Priority\",\"col\":3}},{\"id\":\"0H-dlsKHL8\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Driver Wise Order\",\"col\":3}},{\"id\":\"ScA_i_8GBi\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Volunteer\",\"col\":3}}]",
+  "custom_blocks": [],
+  "docstatus": 0,
+  "doctype": "Workspace",
+  "for_user": "",
+  "hide_custom": 0,
+  "icon": "drag-sm",
+  "indicator_color": "green",
+  "is_hidden": 0,
+  "label": "Biriyani Challenge",
+  "links": [],
+  "modified": "2024-05-23 10:34:53.162281",
+  "module": "Foodcharity",
+  "name": "Biriyani Challenge",
+  "number_cards": [
+   {
+    "label": "No. Of Orders",
+    "number_card_name": "No. Of Orders",
+    "parent": "Biriyani Challenge",
+    "parentfield": "number_cards",
+    "parenttype": "Workspace"
+   },
+   {
+    "label": "Orders Assigned to Volunteers",
+    "number_card_name": "Orders Assigned to Volunteers",
+    "parent": "Biriyani Challenge",
+    "parentfield": "number_cards",
+    "parenttype": "Workspace"
+   }
+  ],
+  "parent_page": "",
+  "public": 1,
+  "quick_lists": [],
+  "restrict_to_domain": "",
+  "roles": [],
+  "sequence_id": 27.1,
+  "shortcuts": [
+   {
+    "color": "Grey",
+    "doc_view": "List",
+    "format": null,
+    "icon": null,
+    "kanban_board": null,
+    "label": "Orders",
+    "link_to": "Orders",
+    "parent": "Biriyani Challenge",
+    "parentfield": "shortcuts",
+    "parenttype": "Workspace",
+    "restrict_to_domain": null,
+    "stats_filter": "[]",
+    "type": "DocType",
+    "url": null
+   },
+   {
+    "color": "Grey",
+    "doc_view": "List",
+    "format": null,
+    "icon": null,
+    "kanban_board": null,
+    "label": "Driver Wise Priority",
+    "link_to": "Driver Wise",
+    "parent": "Biriyani Challenge",
+    "parentfield": "shortcuts",
+    "parenttype": "Workspace",
+    "restrict_to_domain": null,
+    "stats_filter": null,
+    "type": "Report",
+    "url": null
+   },
+   {
+    "color": "Grey",
+    "doc_view": "List",
+    "format": null,
+    "icon": null,
+    "kanban_board": null,
+    "label": "Driver Wise Order",
+    "link_to": "Driver wise order",
+    "parent": "Biriyani Challenge",
+    "parentfield": "shortcuts",
+    "parenttype": "Workspace",
+    "restrict_to_domain": null,
+    "stats_filter": null,
+    "type": "Report",
+    "url": null
+   },
+   {
+    "color": "Grey",
+    "doc_view": "List",
+    "format": null,
+    "icon": null,
+    "kanban_board": null,
+    "label": "Volunteer",
+    "link_to": "Volunteer",
+    "parent": "Biriyani Challenge",
+    "parentfield": "shortcuts",
+    "parenttype": "Workspace",
+    "restrict_to_domain": null,
+    "stats_filter": "[]",
+    "type": "DocType",
+    "url": null
+   }
+  ],
+  "title": "Biriyani Challenge"
+ }
+]

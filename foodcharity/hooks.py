@@ -63,7 +63,44 @@ app_license = "mit"
 # 	"methods": "foodcharity.utils.jinja_methods",
 # 	"filters": "foodcharity.utils.jinja_filters"
 # }
-
+fixtures = [
+    {
+        "dt": "Custom Field",
+        "filters": [
+            ["module", "=", "foodcharity"]
+        ]
+    },
+    {
+        "dt": "Client Script",
+        "filters": [
+            ["module", "=", "foodcharity"]
+        ]
+    },
+     {
+        "dt": "Property Setter",
+        "filters": [
+            ["module", "=", "foodcharity"]
+        ]
+    },
+     {
+        "dt": "Property Setter",
+        "filters": [
+            ["module", "=", "foodcharity"]
+        ]
+    },
+    {
+        "dt": "Workspace",
+        "filters": [
+            ["module", "=", "foodcharity"]
+        ]
+    },
+    {
+        "dt": "Web Form",
+        "filters": [
+            ["module", "=", "foodcharity"]
+        ]
+    }
+]
 # Installation
 # ------------
 
