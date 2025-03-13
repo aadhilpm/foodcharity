@@ -8,19 +8,21 @@
  "field_order": [
   "name1",
   "mobile",
+  "order_co",
   "column_break_eqju",
   "assigned_volunteer",
   "contact_number",
   "whatsapp_number",
+  "copy_mobile_to_whatsapp",
   "section_break_lnin",
   "no_of_biriyani",
   "column_break_aadt",
   "delivery_needed",
   "section_break_tmlu",
   "accommodation_area",
-  "if_other",
   "zone_number",
   "door_number",
+  "coordinate",
   "column_break_wquh",
   "street_number",
   "building_number",
@@ -78,15 +80,6 @@
    "label": "Delivery Information"
   },
   {
-   "fieldname": "accommodation_area",
-   "fieldtype": "Select",
-   "in_list_view": 1,
-   "in_standard_filter": 1,
-   "label": "Accommodation Area",
-   "mandatory_depends_on": "eval:doc.delivery_needed ==\"Yes\"",
-   "options": "\nAl Khor\nAl Sadd\nAl Waab\nAl Kheesa\nAbu Hamour\nAzeeziya\nAin Khaled\nBin Omran\nBin Mahmoud\nBarwa City\nBarwa Madinatna\nDafna\nDoha Jadidh\nDukhan\nDuhail\nFereej Al Soudan\nFereej Abdul Aziz\nGarrafa\nHilal\nIndustrial Area\nIzghawa\nLusail\nMadina Khalifa North\nMadina Khalifa South\nMansoora\nMarkhiya\nMathar Qadeem\nMaamoura\nMesaimeer\nMsheireb\nMuaither\nMughalina\nMunthaza\nNajma\nNew Rayyan\nNew Salatah\nNuaija\nOld Rayyan\nOld Salatah\nRas Laffan\nThumama\nUmm Sa'id\nUmm Salal Ali\nUmm Salal Muhammad\nWakrah\nWukair\nOther"
-  },
-  {
    "fieldname": "column_break_eqju",
    "fieldtype": "Column Break"
   },
@@ -142,22 +135,42 @@
    "mandatory_depends_on": "eval:doc.accommodation_type == \"Villa Compound\""
   },
   {
-   "depends_on": "eval:doc.accommodation_area ==\"Other\"",
-   "fieldname": "if_other",
-   "fieldtype": "Data",
-   "label": "If Other"
-  },
-  {
    "fieldname": "assigned_volunteer",
    "fieldtype": "Link",
    "in_standard_filter": 1,
    "label": "Assigned Volunteer",
    "options": "Volunteer"
+  },
+  {
+   "description": "Please specify the name of the person who referred",
+   "fieldname": "order_co",
+   "fieldtype": "Data",
+   "label": "Order C/O"
+  },
+  {
+   "fieldname": "coordinate",
+   "fieldtype": "Data",
+   "label": "coordinate",
+   "read_only": 1
+  },
+  {
+   "fieldname": "accommodation_area",
+   "fieldtype": "Select",
+   "label": "Accommodation Area",
+   "mandatory_depends_on": "eval:doc.delivery_needed ==\"Yes\"",
+   "options": "\nAl Khor\nAl Sadd\nAl Waab\nAl Kheesa\nAbu Hamour\nAzeeziya\nAin Khaled\nBin Omran\nBin Mahmoud\nBarwa City\nBarwa Madinatna\nDafna\nDoha Jadidh\nDukhan\nDuhail\nFereej Al Soudan\nFereej Abdul Aziz\nGarrafa\nHilal\nIndustrial Area\nIzghawa\nLusail\nMadina Khalifa North\nMadina Khalifa South\nMansoora\nMarkhiya\nMathar Qadeem\nMaamoura\nMesaimeer\nMsheireb\nMuaither\nMughalina\nMunthaza\nNajma\nNew Rayyan\nNew Salatah\nNuaija\nOld Rayyan\nOld Salatah\nRas Laffan\nThumama\nUmm Sa'id\nUmm Salal Ali\nUmm Salal Muhammad\nWakrah\nWukair\nMeshaf\nMessila\nDoha International AirPort\nBani Hajir\nKarthiyath\nSimaisma\nShahaniya\nOther",
+   "sort_options": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "copy_mobile_to_whatsapp",
+   "fieldtype": "Check",
+   "label": "Same as Mobile Number"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-05-16 17:24:11.696428",
+ "modified": "2025-03-13 23:27:40.234398",
  "modified_by": "Administrator",
  "module": "Foodcharity",
  "name": "Orders",
