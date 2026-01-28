@@ -89,12 +89,6 @@ fixtures = [
         ]
     },
     {
-        "dt": "Workspace",
-        "filters": [
-            ["module", "=", "foodcharity"]
-        ]
-    },
-    {
         "dt": "Web Form",
         "filters": [
             ["module", "=", "foodcharity"]
