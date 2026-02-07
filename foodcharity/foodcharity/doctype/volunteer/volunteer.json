@@ -9,8 +9,10 @@
  "field_order": [
   "full_name",
   "mobile_number",
+  "driver_password",
   "interest",
-  "preferred_delivery_location"
+  "preferred_delivery_location",
+  "remark"
  ],
  "fields": [
   {
@@ -29,6 +31,12 @@
    "unique": 1
   },
   {
+   "description": "Password for driver portal access",
+   "fieldname": "driver_password",
+   "fieldtype": "Password",
+   "label": "Driver Password"
+  },
+  {
    "fieldname": "interest",
    "fieldtype": "Select",
    "in_list_view": 1,
@@ -41,6 +49,11 @@
    "fieldtype": "Select",
    "label": "Preferred Delivery Location",
    "options": "\nAl Khor\nAl Sadd\nBin Omran\nDafna\nDoha Jadidh\nDukhan\nGarrafa\nHilal\nIndustrial Area\nLusail\nMadina Khalifa North\nMadina Khalifa South\nMansoora\nMarkhiya\nMathar Qadeem\nMughalina\nMunthaza\nNajma\nNew Rayyan\nNew Salatah\nOld Rayyan\nOld Salatah\nRas Laffan\nThumama\nUmm Sa'id\nUmm Salal Ali\nUmm Salal Muhammad\nWakrah\nWukair\nOther"
+  },
+  {
+   "fieldname": "remark",
+   "fieldtype": "Small Text",
+   "label": "Remark"
   }
  ],
  "index_web_pages_for_search": 1,
@@ -50,11 +63,11 @@
    "link_fieldname": "assigned_volunteer"
   }
  ],
- "modified": "2024-05-16 23:11:26.375071",
+ "modified": "2026-02-08 00:38:38.758559",
  "modified_by": "Administrator",
  "module": "Foodcharity",
  "name": "Volunteer",
- "naming_rule": "Expression",
+ "naming_rule": "Expression (old style)",
  "owner": "Administrator",
  "permissions": [
   {
@@ -71,6 +84,7 @@
   }
  ],
  "quick_entry": 1,
+ "row_format": "Dynamic",
  "search_fields": "full_name,mobile_number",
  "show_title_field_in_link": 1,
  "sort_field": "modified",

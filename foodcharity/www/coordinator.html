@@ -1,0 +1,764 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Coordinator | Thanal Milestone</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{font-family:'Inter',system-ui,sans-serif;background:#f5f5f5;color:#1a1a1a;min-height:100vh}
+
+    /* Login */
+    .login-container{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
+    .login-card{background:#fff;border-radius:12px;padding:32px;max-width:400px;width:100%;box-shadow:0 4px 20px rgba(0,0,0,0.1)}
+    .login-title{font-size:24px;font-weight:700;color:#2563eb;margin-bottom:8px;text-align:center}
+    .login-subtitle{font-size:14px;color:#666;margin-bottom:24px;text-align:center}
+    .login-field{margin-bottom:16px}
+    .login-label{display:block;font-size:13px;font-weight:500;margin-bottom:6px}
+    .login-input{width:100%;padding:14px;font-size:16px;border:1px solid #ddd;border-radius:8px}
+    .login-input:focus{outline:none;border-color:#2563eb}
+    .login-btn{width:100%;padding:14px;font-size:16px;font-weight:600;background:#2563eb;color:#fff;border:none;border-radius:8px;cursor:pointer}
+    .login-btn:disabled{opacity:0.6}
+    .login-error{background:#fef2f2;color:#dc2626;padding:12px;border-radius:8px;font-size:13px;margin-bottom:16px;display:none}
+    .login-error.show{display:block}
+
+    /* Header */
+    .header{background:#2563eb;padding:16px 20px;position:sticky;top:0;z-index:100;display:flex;justify-content:space-between;align-items:center}
+    .header-left h1{color:#fff;font-size:20px;font-weight:600}
+    .header-left .subtitle{color:rgba(255,255,255,0.8);font-size:13px}
+    .logout-btn{background:rgba(255,255,255,0.15);color:#fff;border:none;padding:8px 14px;border-radius:6px;font-size:13px;cursor:pointer}
+
+    /* Tabs */
+    .tabs{display:flex;background:#fff;border-bottom:1px solid #e5e7eb;position:sticky;top:60px;z-index:99}
+    .tab{flex:1;padding:14px;text-align:center;font-size:14px;font-weight:500;color:#666;cursor:pointer;border-bottom:2px solid transparent}
+    .tab.active{color:#2563eb;border-bottom-color:#2563eb}
+
+    /* Main */
+    .main{padding:16px;max-width:1200px;margin:0 auto}
+
+    /* Driver Cards */
+    .drivers-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px;margin-bottom:20px}
+    .driver-card{background:#fff;border-radius:10px;padding:16px;box-shadow:0 1px 3px rgba(0,0,0,0.05);cursor:pointer;border:2px solid transparent;transition:all 0.2s}
+    .driver-card:hover{border-color:#2563eb}
+    .driver-card.selected{border-color:#2563eb;background:#eff6ff}
+    .driver-name{font-size:16px;font-weight:600;margin-bottom:4px}
+    .driver-phone{font-size:13px;color:#666;margin-bottom:4px}
+    .driver-remark{font-size:12px;color:#888;font-style:italic;margin-bottom:12px;padding:6px 8px;background:#f9fafb;border-radius:4px}
+    .driver-stats{display:flex;gap:16px}
+    .stat{text-align:center}
+    .stat-value{font-size:20px;font-weight:700;color:#2563eb}
+    .stat-value.green{color:#16a34a}
+    .stat-label{font-size:10px;color:#888;text-transform:uppercase}
+
+    /* Dashboard */
+    .dashboard-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:12px;margin-bottom:20px}
+    .dash-card{background:#fff;border-radius:10px;padding:16px;box-shadow:0 1px 3px rgba(0,0,0,0.05)}
+    .dash-card.main{grid-column:1/-1}
+    .dash-row{display:flex;flex-wrap:wrap;gap:24px;justify-content:center}
+    .dash-stat{text-align:center;min-width:100px}
+    .dash-value{font-size:32px;font-weight:700;color:#2563eb}
+    .dash-value.green{color:#16a34a}
+    .dash-value.orange{color:#ea580c}
+    .dash-label{font-size:11px;color:#666;text-transform:uppercase;letter-spacing:0.5px}
+    .dash-title{font-size:14px;font-weight:600;color:#333;margin-bottom:12px}
+
+    .status-grid{display:flex;flex-wrap:wrap;gap:8px}
+    .status-item{flex:1;min-width:80px;padding:12px 8px;border-radius:8px;text-align:center;cursor:pointer;transition:transform 0.2s}
+    .status-item:hover{transform:scale(1.05)}
+    .status-item.pending{background:#fef3c7}
+    .status-item.assigned{background:#dbeafe}
+    .status-item.out{background:#fae8ff}
+    .status-item.delivered{background:#dcfce7}
+    .status-item.collected{background:#d1fae5}
+    .status-count{font-size:24px;font-weight:700}
+    .status-item.pending .status-count{color:#b45309}
+    .status-item.assigned .status-count{color:#1d4ed8}
+    .status-item.out .status-count{color:#a21caf}
+    .status-item.delivered .status-count{color:#16a34a}
+    .status-item.collected .status-count{color:#047857}
+    .status-name{font-size:10px;color:#666;text-transform:uppercase;margin-top:4px}
+
+    .biriyani-stats{display:flex;flex-direction:column;gap:8px}
+    .bstat{display:flex;justify-content:space-between;padding:8px 12px;background:#f9fafb;border-radius:6px}
+    .bstat-label{font-size:13px;color:#666}
+    .bstat-value{font-size:14px;font-weight:600;color:#111}
+
+    /* Orders Section */
+    .section-header{display:flex;justify-content:space-between;align-items:center;margin:20px 0 12px;flex-wrap:wrap;gap:10px}
+    .section-title{font-size:16px;font-weight:600}
+    .filter-row{display:flex;gap:8px;flex-wrap:wrap}
+    .filter-select{padding:8px 12px;border:1px solid #ddd;border-radius:6px;font-size:13px;font-family:inherit}
+    .btn{padding:8px 16px;font-size:13px;font-weight:500;border:none;border-radius:6px;cursor:pointer}
+    .btn-primary{background:#2563eb;color:#fff}
+    .btn-secondary{background:#e5e7eb;color:#333}
+    .btn:disabled{opacity:0.5;cursor:not-allowed}
+
+    /* Orders Table */
+    .orders-table{width:100%;background:#fff;border-radius:10px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,0.05)}
+    .orders-table th,.orders-table td{padding:12px;text-align:left;border-bottom:1px solid #f0f0f0;font-size:13px}
+    .orders-table th{background:#f9fafb;font-weight:600;color:#555}
+    .orders-table tr:hover{background:#f9fafb}
+    .orders-table .checkbox{width:40px;text-align:center}
+    .orders-table input[type="checkbox"]{width:16px;height:16px;cursor:pointer}
+    .badge{display:inline-block;padding:3px 8px;border-radius:4px;font-size:11px;font-weight:500}
+    .badge.unassigned{background:#fef3c7;color:#b45309}
+    .badge.assigned{background:#dcfce7;color:#16a34a}
+    .driver-select{padding:6px 10px;border:1px solid #ddd;border-radius:4px;font-size:12px;min-width:120px}
+    .status-select{padding:6px 10px;border:1px solid #ddd;border-radius:4px;font-size:11px;min-width:100px}
+    .remark-input{padding:6px 8px;border:1px solid #ddd;border-radius:4px;font-size:11px;width:100px}
+    .remark-input:focus{outline:none;border-color:#2563eb}
+
+    /* Mobile Orders */
+    .order-cards{display:none}
+    .order-card-item{background:#fff;border-radius:10px;padding:14px;margin-bottom:10px;box-shadow:0 1px 3px rgba(0,0,0,0.05)}
+    .order-card-header{display:flex;justify-content:space-between;align-items:start;margin-bottom:8px}
+    .order-card-name{font-weight:600;font-size:14px}
+    .order-card-id{font-size:11px;color:#2563eb;background:#eff6ff;padding:2px 6px;border-radius:3px}
+    .order-card-details{font-size:12px;color:#666;margin-bottom:10px}
+    .order-card-actions{display:flex;gap:8px;align-items:center}
+    .order-card-checkbox{width:20px;height:20px}
+
+    @media (max-width: 768px) {
+      .orders-table{display:none}
+      .order-cards{display:block}
+      .drivers-grid{grid-template-columns:1fr}
+    }
+
+    /* Loading */
+    .loading{text-align:center;padding:40px;color:#666}
+    .spinner{width:24px;height:24px;border:3px solid #eee;border-top-color:#2563eb;border-radius:50%;animation:spin 0.8s linear infinite;margin:0 auto 10px}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    .hidden{display:none!important}
+
+    /* Status badges in table */
+    .status-badge{display:inline-block;padding:3px 8px;border-radius:10px;font-size:10px;font-weight:600;text-transform:uppercase}
+    .status-badge.pending{background:#fef3c7;color:#b45309}
+    .status-badge.assigned{background:#dbeafe;color:#1d4ed8}
+    .status-badge.out-for-delivery{background:#fae8ff;color:#a21caf}
+    .status-badge.delivered{background:#dcfce7;color:#16a34a}
+    .status-badge.collected{background:#d1fae5;color:#047857}
+  </style>
+</head>
+<body>
+
+<!-- Login View -->
+<div id="login-view" class="login-container">
+  <div class="login-card">
+    <div class="login-title">Coordinator Login</div>
+    <div class="login-subtitle">Thanal Milestone CDC</div>
+    <div id="login-error" class="login-error"></div>
+    <div class="login-field">
+      <label class="login-label">Password</label>
+      <input type="password" id="login-password" class="login-input" placeholder="Enter coordinator password">
+    </div>
+    <button class="login-btn" id="login-btn" onclick="handleLogin()">Login</button>
+  </div>
+</div>
+
+<!-- Dashboard View -->
+<div id="dashboard-view" class="hidden">
+
+<div class="header">
+  <div class="header-left">
+    <h1>Coordinator Dashboard</h1>
+    <div class="subtitle">Thanal Milestone CDC - Biriyani Challenge 2026</div>
+  </div>
+  <button class="logout-btn" onclick="handleLogout()">Logout</button>
+</div>
+
+<div class="tabs">
+  <div class="tab active" onclick="showTab('drivers')">Drivers</div>
+  <div class="tab" onclick="showTab('orders')">All Orders</div>
+</div>
+
+<div class="main">
+  <!-- Dashboard -->
+  <div class="dashboard-grid" id="dashboard">
+    <div class="dash-card main">
+      <div class="dash-row">
+        <div class="dash-stat">
+          <div class="dash-value" id="sum-orders">0</div>
+          <div class="dash-label">Total Orders</div>
+        </div>
+        <div class="dash-stat">
+          <div class="dash-value" id="sum-biriyani">0</div>
+          <div class="dash-label">Total Biriyani</div>
+        </div>
+        <div class="dash-stat">
+          <div class="dash-value green" id="sum-amount">0</div>
+          <div class="dash-label">Expected (QAR)</div>
+        </div>
+        <div class="dash-stat">
+          <div class="dash-value green" id="sum-collected">0</div>
+          <div class="dash-label">Collected (QAR)</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="dash-card status-card">
+      <div class="dash-title">Order Status</div>
+      <div class="status-grid">
+        <div class="status-item pending" onclick="filterByStatus('Pending')">
+          <div class="status-count" id="stat-pending">0</div>
+          <div class="status-name">Pending</div>
+        </div>
+        <div class="status-item assigned" onclick="filterByStatus('Assigned')">
+          <div class="status-count" id="stat-assigned">0</div>
+          <div class="status-name">Assigned</div>
+        </div>
+        <div class="status-item out" onclick="filterByStatus('Out for Delivery')">
+          <div class="status-count" id="stat-out">0</div>
+          <div class="status-name">Out for Delivery</div>
+        </div>
+        <div class="status-item delivered" onclick="filterByStatus('Delivered')">
+          <div class="status-count" id="stat-delivered">0</div>
+          <div class="status-name">Delivered</div>
+        </div>
+        <div class="status-item collected" onclick="filterByStatus('Collected')">
+          <div class="status-count" id="stat-collected">0</div>
+          <div class="status-name">Collected</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="dash-card">
+      <div class="dash-title">Biriyani by Status</div>
+      <div class="biriyani-stats">
+        <div class="bstat"><span class="bstat-label">Pending:</span><span class="bstat-value" id="biri-pending">0</span></div>
+        <div class="bstat"><span class="bstat-label">Assigned:</span><span class="bstat-value" id="biri-assigned">0</span></div>
+        <div class="bstat"><span class="bstat-label">Out for Delivery:</span><span class="bstat-value" id="biri-out">0</span></div>
+        <div class="bstat"><span class="bstat-label">Delivered:</span><span class="bstat-value" id="biri-delivered">0</span></div>
+        <div class="bstat"><span class="bstat-label">Collected:</span><span class="bstat-value" id="biri-collected">0</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Drivers Tab -->
+  <div id="drivers-tab">
+    <div class="section-header">
+      <div class="section-title">Drivers</div>
+    </div>
+    <div class="drivers-grid" id="drivers-grid">
+      <div class="loading"><div class="spinner"></div>Loading drivers...</div>
+    </div>
+  </div>
+
+  <!-- Orders Tab -->
+  <div id="orders-tab" style="display:none">
+    <div class="section-header">
+      <div class="section-title">Orders</div>
+      <div class="filter-row">
+        <input type="text" class="filter-select" id="search-input" placeholder="Search name/phone..." oninput="filterOrders()" style="min-width:150px">
+        <select class="filter-select" id="filter-driver" onchange="filterOrders()">
+          <option value="">All Drivers</option>
+          <option value="unassigned">Unassigned</option>
+        </select>
+        <select class="filter-select" id="filter-status" onchange="filterOrders()">
+          <option value="">All Status</option>
+          <option value="Pending">Pending</option>
+          <option value="Assigned">Assigned</option>
+          <option value="Out for Delivery">Out for Delivery</option>
+          <option value="Delivered">Delivered</option>
+          <option value="Collected">Collected</option>
+        </select>
+      </div>
+    </div>
+    <div class="section-header" style="margin-top:0">
+      <div></div>
+      <div class="filter-row">
+        <select class="filter-select" id="assign-driver">
+          <option value="">Select Driver</option>
+        </select>
+        <button class="btn btn-primary" id="bulk-assign-btn" onclick="bulkAssign()" disabled>Assign Selected</button>
+        <select class="filter-select" id="bulk-status">
+          <option value="">Set Status</option>
+          <option value="Pending">Pending</option>
+          <option value="Assigned">Assigned</option>
+          <option value="Out for Delivery">Out for Delivery</option>
+          <option value="Delivered">Delivered</option>
+          <option value="Collected">Collected</option>
+        </select>
+        <button class="btn btn-secondary" id="bulk-status-btn" onclick="bulkUpdateStatus()" disabled>Update Status</button>
+      </div>
+    </div>
+
+    <!-- Desktop Table -->
+    <table class="orders-table" id="orders-table">
+      <thead>
+        <tr>
+          <th class="checkbox"><input type="checkbox" id="select-all" onchange="toggleSelectAll()"></th>
+          <th>Order</th>
+          <th>Name</th>
+          <th>Phone</th>
+          <th>Area</th>
+          <th>Qty</th>
+          <th>Status</th>
+          <th>Driver</th>
+          <th>Remark</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody id="orders-tbody"></tbody>
+    </table>
+
+    <!-- Mobile Cards -->
+    <div class="order-cards" id="order-cards"></div>
+  </div>
+</div>
+
+</div><!-- End dashboard-view -->
+
+<script src="/assets/frappe/js/lib/jquery/jquery.min.js"></script>
+<script>
+if (typeof frappe === 'undefined') {
+  window.frappe = {
+    call: function(opts) {
+      return new Promise((resolve, reject) => {
+        $.ajax({
+          url: '/api/method/' + opts.method,
+          type: 'POST',
+          data: opts.args || {},
+          dataType: 'json',
+          success: function(data) { resolve(data); },
+          error: function(xhr, status, error) { reject(error); }
+        });
+      });
+    }
+  };
+}
+
+let drivers = [];
+let orders = [];
+let selectedOrders = new Set();
+let perBiriyaniCharge = 20;
+
+// Login handling
+async function handleLogin() {
+  const password = document.getElementById('login-password').value;
+  const btn = document.getElementById('login-btn');
+  const errorDiv = document.getElementById('login-error');
+
+  if (!password) {
+    errorDiv.textContent = 'Please enter password';
+    errorDiv.classList.add('show');
+    return;
+  }
+
+  btn.disabled = true;
+  btn.textContent = 'Logging in...';
+  errorDiv.classList.remove('show');
+
+  try {
+    const res = await frappe.call({
+      method: 'foodcharity.api.coordinator_login',
+      args: { password }
+    });
+
+    if (res.message?.success) {
+      localStorage.setItem('coordinator_session', 'true');
+      showDashboard();
+    } else {
+      errorDiv.textContent = res.message?.error || 'Invalid password';
+      errorDiv.classList.add('show');
+    }
+  } catch (e) {
+    errorDiv.textContent = 'Login failed. Please try again.';
+    errorDiv.classList.add('show');
+  }
+
+  btn.disabled = false;
+  btn.textContent = 'Login';
+}
+
+function showDashboard() {
+  document.getElementById('login-view').classList.add('hidden');
+  document.getElementById('dashboard-view').classList.remove('hidden');
+  loadData();
+}
+
+function handleLogout() {
+  localStorage.removeItem('coordinator_session');
+  document.getElementById('dashboard-view').classList.add('hidden');
+  document.getElementById('login-view').classList.remove('hidden');
+  document.getElementById('login-password').value = '';
+}
+
+function checkSession() {
+  if (localStorage.getItem('coordinator_session') === 'true') {
+    showDashboard();
+  }
+}
+
+function showTab(tab) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelector(`.tab:nth-child(${tab === 'drivers' ? 1 : 2})`).classList.add('active');
+  document.getElementById('drivers-tab').style.display = tab === 'drivers' ? 'block' : 'none';
+  document.getElementById('orders-tab').style.display = tab === 'orders' ? 'block' : 'none';
+}
+
+async function loadData() {
+  await Promise.all([loadDrivers(), loadOrders()]);
+  updateSummary();
+}
+
+async function loadDrivers() {
+  try {
+    const res = await frappe.call({ method: 'foodcharity.api.get_all_drivers' });
+    const data = res.message || {};
+    drivers = data.drivers || [];
+    perBiriyaniCharge = data.per_biriyani_charge || 20;
+    renderDrivers();
+    populateDriverSelect();
+  } catch (e) {
+    console.error('Error loading drivers:', e);
+  }
+}
+
+async function loadOrders() {
+  try {
+    const res = await frappe.call({ method: 'foodcharity.api.get_all_orders_for_coordinator' });
+    orders = res.message || [];
+    renderOrders();
+  } catch (e) {
+    console.error('Error loading orders:', e);
+  }
+}
+
+function renderDrivers() {
+  const grid = document.getElementById('drivers-grid');
+  if (drivers.length === 0) {
+    grid.innerHTML = '<p style="color:#666;padding:20px">No drivers found</p>';
+    return;
+  }
+
+  grid.innerHTML = drivers.map(d => `
+    <div class="driver-card" onclick="filterByDriver('${d.name}')">
+      <div class="driver-name">${d.full_name || d.name}</div>
+      <div class="driver-phone">${d.mobile_number || '-'}${d.preferred_delivery_location ? ' | ' + d.preferred_delivery_location : ''}</div>
+      ${d.remark ? `<div class="driver-remark">${d.remark}</div>` : ''}
+      <div class="driver-stats">
+        <div class="stat">
+          <div class="stat-value">${d.order_count}</div>
+          <div class="stat-label">Orders</div>
+        </div>
+        <div class="stat">
+          <div class="stat-value">${d.total_biriyani}</div>
+          <div class="stat-label">Biriyani</div>
+        </div>
+        <div class="stat">
+          <div class="stat-value">${d.total_amount}</div>
+          <div class="stat-label">Amount</div>
+        </div>
+        <div class="stat">
+          <div class="stat-value green">${d.total_collected}</div>
+          <div class="stat-label">Collected</div>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function populateDriverSelect() {
+  const filterSelect = document.getElementById('filter-driver');
+  const assignSelect = document.getElementById('assign-driver');
+
+  // Add drivers to filter
+  drivers.forEach(d => {
+    filterSelect.innerHTML += `<option value="${d.name}">${d.full_name || d.name}</option>`;
+    assignSelect.innerHTML += `<option value="${d.name}">${d.full_name || d.name}</option>`;
+  });
+}
+
+function renderOrders() {
+  const driverFilter = document.getElementById('filter-driver').value;
+  const statusFilter = document.getElementById('filter-status').value;
+  const searchQuery = (document.getElementById('search-input').value || '').toLowerCase().trim();
+
+  let filtered = orders;
+
+  // Driver filter
+  if (driverFilter === 'unassigned') {
+    filtered = filtered.filter(o => !o.assigned_volunteer);
+  } else if (driverFilter) {
+    filtered = filtered.filter(o => o.assigned_volunteer === driverFilter);
+  }
+
+  // Status filter
+  if (statusFilter) {
+    filtered = filtered.filter(o => (o.order_status || 'Pending') === statusFilter);
+  }
+
+  // Search filter
+  if (searchQuery) {
+    filtered = filtered.filter(o =>
+      (o.name1 || '').toLowerCase().includes(searchQuery) ||
+      (o.mobile || '').includes(searchQuery) ||
+      (o.name || '').toLowerCase().includes(searchQuery) ||
+      (o.accommodation_area || '').toLowerCase().includes(searchQuery)
+    );
+  }
+
+  // Desktop table
+  const tbody = document.getElementById('orders-tbody');
+  tbody.innerHTML = filtered.map(o => {
+    const status = o.order_status || 'Pending';
+    const statusClass = status.toLowerCase().replace(/ /g, '-');
+    return `
+    <tr>
+      <td class="checkbox"><input type="checkbox" value="${o.name}" onchange="toggleOrderSelect(this)" ${selectedOrders.has(o.name) ? 'checked' : ''}></td>
+      <td><span class="order-card-id">${o.name}</span></td>
+      <td>${o.name1 || '-'}</td>
+      <td>${o.mobile || '-'}</td>
+      <td>${o.accommodation_area || '-'}</td>
+      <td><strong>${o.no_of_biriyani || 0}</strong></td>
+      <td><span class="status-badge ${statusClass}">${status}</span></td>
+      <td>
+        <select class="driver-select" onchange="assignOrder('${o.name}', this.value)">
+          <option value="">Unassigned</option>
+          ${drivers.map(d => `<option value="${d.name}" ${o.assigned_volunteer === d.name ? 'selected' : ''}>${d.full_name || d.name}</option>`).join('')}
+        </select>
+      </td>
+      <td>
+        <input type="text" class="remark-input" value="${(o.remark || '').replace(/"/g, '&quot;')}" placeholder="Add remark" onblur="updateRemark('${o.name}', this.value)">
+      </td>
+      <td>
+        <select class="status-select" onchange="updateOrderStatus('${o.name}', this.value)">
+          <option value="Pending" ${status === 'Pending' ? 'selected' : ''}>Pending</option>
+          <option value="Assigned" ${status === 'Assigned' ? 'selected' : ''}>Assigned</option>
+          <option value="Out for Delivery" ${status === 'Out for Delivery' ? 'selected' : ''}>Out for Delivery</option>
+          <option value="Delivered" ${status === 'Delivered' ? 'selected' : ''}>Delivered</option>
+          <option value="Collected" ${status === 'Collected' ? 'selected' : ''}>Collected</option>
+        </select>
+      </td>
+    </tr>`;
+  }).join('');
+
+  // Mobile cards
+  const cards = document.getElementById('order-cards');
+  cards.innerHTML = filtered.map(o => {
+    const status = o.order_status || 'Pending';
+    const statusClass = status.toLowerCase().replace(/ /g, '-');
+    return `
+    <div class="order-card-item">
+      <div class="order-card-header">
+        <span class="order-card-name">${o.name1 || '-'}</span>
+        <span class="status-badge ${statusClass}">${status}</span>
+      </div>
+      <div class="order-card-details">
+        <span class="order-card-id">${o.name}</span> | ${o.mobile || '-'} | ${o.accommodation_area || '-'} | <strong>${o.no_of_biriyani || 0} Biriyani</strong>
+      </div>
+      <div class="order-card-actions">
+        <input type="checkbox" class="order-card-checkbox" value="${o.name}" onchange="toggleOrderSelect(this)" ${selectedOrders.has(o.name) ? 'checked' : ''}>
+        <select class="driver-select" style="flex:1" onchange="assignOrder('${o.name}', this.value)">
+          <option value="">Unassigned</option>
+          ${drivers.map(d => `<option value="${d.name}" ${o.assigned_volunteer === d.name ? 'selected' : ''}>${d.full_name || d.name}</option>`).join('')}
+        </select>
+      </div>
+      <div class="order-card-actions" style="margin-top:8px">
+        <select class="status-select" style="flex:1" onchange="updateOrderStatus('${o.name}', this.value)">
+          <option value="Pending" ${status === 'Pending' ? 'selected' : ''}>Pending</option>
+          <option value="Assigned" ${status === 'Assigned' ? 'selected' : ''}>Assigned</option>
+          <option value="Out for Delivery" ${status === 'Out for Delivery' ? 'selected' : ''}>Out for Delivery</option>
+          <option value="Delivered" ${status === 'Delivered' ? 'selected' : ''}>Delivered</option>
+          <option value="Collected" ${status === 'Collected' ? 'selected' : ''}>Collected</option>
+        </select>
+      </div>
+      <div style="margin-top:8px">
+        <input type="text" class="remark-input" style="width:100%" value="${(o.remark || '').replace(/"/g, '&quot;')}" placeholder="Add remark..." onblur="updateRemark('${o.name}', this.value)">
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function filterOrders() {
+  selectedOrders.clear();
+  document.getElementById('select-all').checked = false;
+  renderOrders();
+  updateBulkButton();
+}
+
+function filterByDriver(driverId) {
+  document.getElementById('filter-driver').value = driverId;
+  showTab('orders');
+  filterOrders();
+}
+
+function toggleSelectAll() {
+  const checked = document.getElementById('select-all').checked;
+  const checkboxes = document.querySelectorAll('#orders-tbody input[type="checkbox"], .order-card-checkbox');
+  checkboxes.forEach(cb => {
+    cb.checked = checked;
+    if (checked) {
+      selectedOrders.add(cb.value);
+    } else {
+      selectedOrders.delete(cb.value);
+    }
+  });
+  updateBulkButton();
+}
+
+function toggleOrderSelect(checkbox) {
+  if (checkbox.checked) {
+    selectedOrders.add(checkbox.value);
+  } else {
+    selectedOrders.delete(checkbox.value);
+  }
+  updateBulkButton();
+}
+
+function updateBulkButton() {
+  const assignBtn = document.getElementById('bulk-assign-btn');
+  const statusBtn = document.getElementById('bulk-status-btn');
+  const hasSelection = selectedOrders.size > 0;
+
+  assignBtn.disabled = !hasSelection;
+  assignBtn.textContent = hasSelection ? `Assign (${selectedOrders.size})` : 'Assign Selected';
+
+  statusBtn.disabled = !hasSelection;
+  statusBtn.textContent = hasSelection ? `Status (${selectedOrders.size})` : 'Update Status';
+}
+
+async function assignOrder(orderId, driverId) {
+  try {
+    await frappe.call({
+      method: 'foodcharity.api.assign_order_to_driver',
+      args: { order_id: orderId, driver_id: driverId }
+    });
+    await loadData();
+  } catch (e) {
+    alert('Error assigning order');
+  }
+}
+
+async function updateOrderStatus(orderId, status) {
+  try {
+    await frappe.call({
+      method: 'foodcharity.api.update_order_status',
+      args: { order_id: orderId, status: status }
+    });
+    await loadData();
+  } catch (e) {
+    alert('Error updating status');
+  }
+}
+
+async function updateRemark(orderId, remark) {
+  try {
+    await frappe.call({
+      method: 'foodcharity.api.update_order_remark',
+      args: { order_id: orderId, remark: remark }
+    });
+  } catch (e) {
+    console.error('Error updating remark');
+  }
+}
+
+async function bulkAssign() {
+  const driverId = document.getElementById('assign-driver').value;
+  if (!driverId) {
+    alert('Please select a driver');
+    return;
+  }
+
+  const btn = document.getElementById('bulk-assign-btn');
+  btn.disabled = true;
+  btn.textContent = 'Assigning...';
+
+  try {
+    await frappe.call({
+      method: 'foodcharity.api.bulk_assign_orders',
+      args: { order_ids: JSON.stringify([...selectedOrders]), driver_id: driverId }
+    });
+    selectedOrders.clear();
+    document.getElementById('select-all').checked = false;
+    await loadData();
+  } catch (e) {
+    alert('Error assigning orders');
+  }
+
+  updateBulkButton();
+}
+
+async function bulkUpdateStatus() {
+  const status = document.getElementById('bulk-status').value;
+  if (!status) {
+    alert('Please select a status');
+    return;
+  }
+
+  const btn = document.getElementById('bulk-status-btn');
+  btn.disabled = true;
+  btn.textContent = 'Updating...';
+
+  try {
+    for (const orderId of selectedOrders) {
+      await frappe.call({
+        method: 'foodcharity.api.update_order_status',
+        args: { order_id: orderId, status: status }
+      });
+    }
+    selectedOrders.clear();
+    document.getElementById('select-all').checked = false;
+    await loadData();
+  } catch (e) {
+    alert('Error updating status');
+  }
+
+  updateBulkButton();
+}
+
+function updateSummary() {
+  const totalOrders = orders.length;
+  const totalBiriyani = orders.reduce((sum, o) => sum + (o.no_of_biriyani || 0), 0);
+  const totalAmount = totalBiriyani * perBiriyaniCharge;
+  const totalCollected = orders.reduce((sum, o) => sum + (o.collected_amount || 0), 0);
+
+  // Count by status
+  const statusCounts = { 'Pending': 0, 'Assigned': 0, 'Out for Delivery': 0, 'Delivered': 0, 'Collected': 0 };
+  const biriyaniByStatus = { 'Pending': 0, 'Assigned': 0, 'Out for Delivery': 0, 'Delivered': 0, 'Collected': 0 };
+
+  orders.forEach(o => {
+    const status = o.order_status || 'Pending';
+    statusCounts[status] = (statusCounts[status] || 0) + 1;
+    biriyaniByStatus[status] = (biriyaniByStatus[status] || 0) + (o.no_of_biriyani || 0);
+  });
+
+  // Update main stats
+  document.getElementById('sum-orders').textContent = totalOrders;
+  document.getElementById('sum-biriyani').textContent = totalBiriyani;
+  document.getElementById('sum-amount').textContent = totalAmount;
+  document.getElementById('sum-collected').textContent = totalCollected;
+
+  // Update status counts
+  document.getElementById('stat-pending').textContent = statusCounts['Pending'];
+  document.getElementById('stat-assigned').textContent = statusCounts['Assigned'];
+  document.getElementById('stat-out').textContent = statusCounts['Out for Delivery'];
+  document.getElementById('stat-delivered').textContent = statusCounts['Delivered'];
+  document.getElementById('stat-collected').textContent = statusCounts['Collected'];
+
+  // Update biriyani by status
+  document.getElementById('biri-pending').textContent = biriyaniByStatus['Pending'];
+  document.getElementById('biri-assigned').textContent = biriyaniByStatus['Assigned'];
+  document.getElementById('biri-out').textContent = biriyaniByStatus['Out for Delivery'];
+  document.getElementById('biri-delivered').textContent = biriyaniByStatus['Delivered'];
+  document.getElementById('biri-collected').textContent = biriyaniByStatus['Collected'];
+}
+
+function filterByStatus(status) {
+  document.getElementById('filter-driver').value = '';
+  document.getElementById('filter-status').value = status;
+  showTab('orders');
+  filterOrders();
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+  checkSession();
+  document.getElementById('login-password').addEventListener('keypress', function(e) {
+    if (e.key === 'Enter') handleLogin();
+  });
+});
+</script>
+
+</body>
+</html>

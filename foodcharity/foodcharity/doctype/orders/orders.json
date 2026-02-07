@@ -15,9 +15,16 @@
   "whatsapp_number",
   "copy_mobile_to_whatsapp",
   "section_break_lnin",
+  "order_type",
+  "order_status",
   "no_of_biriyani",
+  "contribution_amount",
+  "collected_amount",
   "column_break_aadt",
   "delivery_needed",
+  "location_request_sent",
+  "thank_you_sent",
+  "remark",
   "section_break_tmlu",
   "accommodation_area",
   "zone_number",
@@ -60,18 +67,18 @@
    "reqd": 1
   },
   {
+   "depends_on": "eval:doc.delivery_needed ==\"Yes\"",
    "fieldname": "no_of_biriyani",
    "fieldtype": "Int",
    "label": "No of Biriyani",
-   "non_negative": 1,
-   "reqd": 1
+   "mandatory_depends_on": "eval:doc.delivery_needed ==\"Yes\"",
+   "non_negative": 1
   },
   {
    "fieldname": "delivery_needed",
    "fieldtype": "Select",
    "label": "Delivery Needed",
-   "options": "\nYes\nNo",
-   "reqd": 1
+   "options": "\nYes\nNo"
   },
   {
    "depends_on": "eval:doc.delivery_needed ==\"Yes\"",
@@ -166,15 +173,62 @@
    "fieldname": "copy_mobile_to_whatsapp",
    "fieldtype": "Check",
    "label": "Same as Mobile Number"
+  },
+  {
+   "fieldname": "order_type",
+   "fieldtype": "Select",
+   "label": "Order Type",
+   "options": "Delivery\nSelf Pickup\nContribution Only",
+   "reqd": 1
+  },
+  {
+   "default": "Pending",
+   "fieldname": "order_status",
+   "fieldtype": "Select",
+   "label": "Order Status",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "options": "Pending\nAssigned\nOut for Delivery\nDelivered\nCollected"
+  },
+  {
+   "fieldname": "contribution_amount",
+   "fieldtype": "Currency",
+   "label": "Contribution Amount"
+  },
+  {
+   "fieldname": "collected_amount",
+   "fieldtype": "Currency",
+   "label": "Collected Amount",
+   "description": "Amount collected by driver"
+  },
+  {
+   "default": "0",
+   "fieldname": "location_request_sent",
+   "fieldtype": "Check",
+   "label": "Location Request Sent",
+   "description": "Driver sent location request via WhatsApp"
+  },
+  {
+   "default": "0",
+   "fieldname": "thank_you_sent",
+   "fieldtype": "Check",
+   "label": "Thank You Sent",
+   "description": "Driver sent thank you message via WhatsApp"
+  },
+  {
+   "fieldname": "remark",
+   "fieldtype": "Small Text",
+   "label": "Remark",
+   "description": "Notes about this order"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-03-13 23:27:40.234398",
+ "modified": "2026-02-07 19:12:57.561311",
  "modified_by": "Administrator",
  "module": "Foodcharity",
  "name": "Orders",
- "naming_rule": "Expression",
+ "naming_rule": "Expression (old style)",
  "owner": "Administrator",
  "permissions": [
   {
@@ -191,6 +245,7 @@
   }
  ],
  "quick_entry": 1,
+ "row_format": "Dynamic",
  "sort_field": "modified",
  "sort_order": "DESC",
  "states": [],

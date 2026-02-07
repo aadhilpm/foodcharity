@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Biriyani Challenge 2026 | Order</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+Malayalam:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{font-family:'Inter',system-ui,sans-serif;color:#1a1a1a;background:#fff;line-height:1.6}
+    .ml{font-family:'Noto Sans Malayalam','Inter',sans-serif}
+    a{text-decoration:none;color:inherit}
+    img{max-width:100%;display:block}
+
+    .order-page{min-height:100vh}
+
+    /* Header */
+    .page-header{background:linear-gradient(135deg,#2563eb 0%,#3b82f6 100%);padding:60px 20px 50px;text-align:center}
+    .header-inner{max-width:500px;margin:0 auto}
+    .page-header h1{font-size:32px;font-weight:700;color:#fff;margin-bottom:6px}
+    .page-header .sub{font-size:15px;color:rgba(255,255,255,0.85);margin-bottom:20px}
+    .event-date{display:inline-flex;align-items:center;gap:8px;padding:12px 24px;background:rgba(255,255,255,0.15);backdrop-filter:blur(4px);border:1px solid rgba(255,255,255,0.2);border-radius:50px;font-size:14px;font-weight:500;color:#fff}
+    .event-date svg{width:18px;height:18px}
+
+    /* Main Content */
+    .main-content{max-width:560px;margin:0 auto;padding:32px 20px 60px}
+
+    /* Back Link */
+    .back-link{display:inline-flex;align-items:center;gap:6px;color:#666;font-size:14px;margin-bottom:24px}
+    .back-link:hover{color:#2563eb}
+    .back-link svg{width:16px;height:16px}
+
+    /* Tabs */
+    .tabs{display:flex;gap:8px;margin-bottom:24px}
+    .tab-btn{flex:1;padding:14px 16px;font-size:14px;font-weight:500;font-family:inherit;background:#fff;border:1px solid #eee;border-radius:8px;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:8px}
+    .tab-btn svg{width:18px;height:18px}
+    .tab-btn:hover{border-color:#2563eb;color:#2563eb}
+    .tab-btn.active{background:#2563eb;color:#fff;border-color:#2563eb}
+
+    /* Card */
+    .card{background:#fff;border-radius:8px;border:1px solid #eee}
+
+    /* Search */
+    .search-section{padding:24px}
+    .search-box{display:flex;gap:10px}
+    .search-input{flex:1;padding:12px 14px;font-size:14px;font-family:inherit;border:1px solid #eee;border-radius:6px}
+    .search-input:focus{outline:none;border-color:#2563eb}
+    .search-btn{padding:12px 24px;font-size:14px;font-weight:500;font-family:inherit;background:#2563eb;color:#fff;border:none;border-radius:6px;cursor:pointer}
+    .search-btn:hover{background:#1d4ed8}
+    .search-btn:disabled{opacity:.6;cursor:not-allowed}
+    .search-results{margin-top:20px}
+    .search-empty{text-align:center;padding:40px 16px;color:#888;font-size:14px}
+    .result-card{padding:16px;border:1px solid #eee;border-radius:8px;margin-bottom:10px;cursor:pointer;transition:all .2s}
+    .result-card:hover{border-color:#2563eb;background:#f0f9ff}
+    .result-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px}
+    .result-name{font-weight:600;font-size:15px;color:#111}
+    .result-id{font-size:11px;color:#2563eb;background:#eff6ff;padding:3px 8px;border-radius:4px}
+    .result-details{display:flex;flex-wrap:wrap;gap:12px;font-size:13px;color:#666}
+    .result-detail{display:flex;align-items:center;gap:4px}
+    .result-detail svg{width:14px;height:14px}
+    .result-status{display:inline-block;padding:3px 8px;border-radius:10px;font-size:10px;font-weight:600;text-transform:uppercase}
+    .result-status.pending{background:#fef3c7;color:#b45309}
+    .result-status.assigned{background:#dbeafe;color:#1d4ed8}
+    .result-status.out-for-delivery{background:#fae8ff;color:#a21caf}
+    .result-status.delivered{background:#dcfce7;color:#16a34a}
+    .result-status.collected{background:#d1fae5;color:#047857}
+    .result-collected{color:#16a34a;font-weight:600}
+
+    /* Form */
+    .form-section{padding:24px;border-bottom:1px solid #f0f0f0}
+    .form-section:last-of-type{border-bottom:none}
+    .section-title{font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:#2563eb;margin-bottom:20px}
+
+    .field{margin-bottom:16px}
+    .field:last-child{margin-bottom:0}
+    .field-label{display:block;font-size:14px;font-weight:500;color:#333;margin-bottom:6px}
+    .field-label .req{color:#ef4444;margin-left:2px}
+    .field-input,.field-select{width:100%;padding:12px 14px;font-size:14px;font-family:inherit;border:1px solid #eee;border-radius:6px;transition:border-color .2s}
+    .field-input:focus,.field-select:focus{outline:none;border-color:#2563eb}
+    .field-select{cursor:pointer;background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23666' stroke-width='2'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") no-repeat right 12px center;-webkit-appearance:none;padding-right:40px}
+    .field-select:disabled{background-color:#f9f9f9;color:#999;cursor:not-allowed}
+    .field-hint{font-size:12px;color:#888;margin-top:4px}
+
+    .checkbox-field{display:flex;align-items:center;gap:10px;margin-top:8px}
+    .checkbox-input{width:18px;height:18px;accent-color:#2563eb;cursor:pointer}
+    .checkbox-label{font-size:14px;cursor:pointer}
+
+    /* Phone with country code */
+    .phone-field{display:flex;gap:0}
+    .country-code-fixed{padding:12px 14px;font-size:14px;font-weight:500;background:#f5f5f5;border:1px solid #eee;border-right:none;border-radius:6px 0 0 6px;color:#555}
+    .country-code-select{padding:12px 10px;font-size:14px;font-weight:500;background:#f5f5f5;border:1px solid #eee;border-right:none;border-radius:6px 0 0 6px;color:#555;cursor:pointer;font-family:inherit}
+    .country-code-select:focus{outline:none;border-color:#2563eb}
+    .phone-input{flex:1;border-radius:0 6px 6px 0!important}
+
+    /* Location */
+    .location-box{background:#fafafa;border-radius:8px;padding:16px;margin-top:16px}
+    .location-header{display:flex;align-items:center;gap:8px;margin-bottom:14px}
+    .location-header svg{width:16px;height:16px;color:#2563eb}
+    .location-header span{font-size:13px;font-weight:500;color:#555}
+    .location-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+    @media(max-width:540px){.location-grid{grid-template-columns:1fr}}
+    .location-field label{display:block;font-size:12px;font-weight:500;color:#666;margin-bottom:4px}
+    .loc-field-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px}
+    .field-toggle{font-size:10px;color:#2563eb;background:none;border:none;cursor:pointer;text-decoration:underline}
+    .location-field select,.location-field input{width:100%;padding:10px 12px;font-size:13px;font-family:inherit;border:1px solid #eee;border-radius:6px;background:#fff}
+
+    /* Footer */
+    .form-footer{padding:24px;background:#fafafa;border-top:1px solid #eee}
+    .error-msg{background:#fef2f2;color:#ef4444;padding:12px;border-radius:6px;font-size:13px;margin-bottom:12px;display:none}
+    .error-msg.show{display:block}
+    .submit-btn{width:100%;padding:14px;font-size:15px;font-weight:600;font-family:inherit;background:#2563eb;color:#fff;border:none;border-radius:6px;cursor:pointer;transition:background .2s}
+    .submit-btn:hover{background:#1d4ed8}
+    .submit-btn:disabled{opacity:.6;cursor:not-allowed}
+    .submit-btn.update{background:#16a34a}
+    .submit-btn.update:hover{background:#15803d}
+
+    /* Success */
+    .success-state{padding:60px 24px;text-align:center;display:none}
+    .success-state.show{display:block}
+    .success-icon{width:64px;height:64px;background:#ecfdf5;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 20px}
+    .success-icon svg{width:32px;height:32px;color:#16a34a}
+    .success-state h2{font-size:20px;font-weight:600;color:#111;margin-bottom:8px}
+    .success-state p{color:#666;font-size:14px}
+    .success-state .order-id{font-size:16px;font-weight:600;color:#2563eb;margin:20px 0 28px}
+    .new-order-btn{display:inline-flex;align-items:center;gap:8px;padding:12px 28px;font-size:14px;font-weight:500;font-family:inherit;color:#2563eb;background:#eff6ff;border:none;border-radius:6px;cursor:pointer}
+    .new-order-btn:hover{background:#ede9fe}
+
+    /* Loading */
+    .loading-state{padding:60px 24px;text-align:center}
+    .spinner{width:28px;height:28px;border:3px solid #eee;border-top-color:#2563eb;border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 12px}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    .loading-state p{color:#666;font-size:14px}
+
+    /* Update Header */
+    .update-header{padding:16px 24px;background:#ecfdf5;border-bottom:1px solid #bbf7d0;display:flex;justify-content:space-between;align-items:center}
+    .update-info{font-size:13px;color:#16a34a;font-weight:500}
+    .cancel-edit{font-size:13px;color:#666;background:none;border:none;cursor:pointer;text-decoration:underline}
+
+    /* Driver Info */
+    .driver-info{padding:16px 24px;background:#f0f9ff;border-bottom:1px solid #bfdbfe}
+    .driver-info-title{font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:#2563eb;margin-bottom:12px}
+    .driver-card{display:flex;align-items:center;gap:12px}
+    .driver-avatar{width:40px;height:40px;background:#2563eb;color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:16px}
+    .driver-details{flex:1}
+    .driver-name{font-weight:600;font-size:14px;color:#111}
+    .driver-mobile{font-size:13px;color:#666}
+    .driver-actions{display:flex;gap:8px}
+    .driver-action{width:36px;height:36px;border-radius:8px;border:1px solid #eee;background:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .2s}
+    .driver-action:hover{border-color:#2563eb;background:#f0f9ff}
+    .driver-action svg{width:18px;height:18px;color:#555}
+
+    .hidden{display:none!important}
+
+    /* Event Closed State */
+    .event-closed{padding:80px 24px;text-align:center}
+    .event-closed-icon{width:80px;height:80px;background:#eff6ff;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 24px}
+    .event-closed-icon svg{width:40px;height:40px;color:#2563eb}
+    .event-closed h2{font-size:24px;font-weight:700;color:#111;margin-bottom:8px}
+    .event-closed p{color:#666;font-size:15px;margin-bottom:24px}
+    .event-closed .home-btn{display:inline-flex;align-items:center;gap:8px;padding:12px 28px;font-size:14px;font-weight:500;color:#fff;background:#2563eb;border:none;border-radius:6px;cursor:pointer;text-decoration:none}
+  </style>
+</head>
+<body>
+
+<div class="order-page">
+  <!-- Header -->
+  <div class="page-header">
+    <div class="header-inner">
+      <h1 id="event-name">Biriyani Challenge 2026</h1>
+      <p class="sub" id="event-subtitle">Thanal Milestone CDC</p>
+      <div class="event-date" id="event-date-display">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+        <span id="event-date-text">Friday, 13th February 2026</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <div class="main-content">
+    <a href="/home" class="back-link">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+      Back to Home
+    </a>
+
+    <!-- Tabs -->
+    <div class="tabs">
+      <button class="tab-btn active" id="tab-new" onclick="switchTab('new')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+        New Order
+      </button>
+      <button class="tab-btn" id="tab-search" onclick="switchTab('search')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        Search Order
+      </button>
+    </div>
+
+    <!-- Search Panel -->
+    <div class="card hidden" id="search-panel">
+      <div class="search-section">
+        <div class="search-box">
+          <input type="tel" class="search-input" id="search-phone" placeholder="Enter phone number..." maxlength="15">
+          <button class="search-btn" id="search-btn" onclick="searchOrders()">Search</button>
+        </div>
+        <div class="search-results" id="search-results"></div>
+      </div>
+    </div>
+
+    <!-- Order Form Card -->
+    <div class="card" id="order-card">
+      <div class="update-header hidden" id="update-header">
+        <span class="update-info">Editing: <strong id="editing-order-id"></strong></span>
+        <button class="cancel-edit" onclick="cancelEdit()">Cancel</button>
+      </div>
+
+      <div class="driver-info hidden" id="driver-info">
+        <div class="driver-info-title">Assigned Driver</div>
+        <div class="driver-card">
+          <div class="driver-avatar" id="driver-avatar">D</div>
+          <div class="driver-details">
+            <div class="driver-name" id="driver-name">-</div>
+            <div class="driver-mobile" id="driver-mobile">-</div>
+          </div>
+          <div class="driver-actions">
+            <button class="driver-action" onclick="callDriver()" title="Call Driver">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72"/></svg>
+            </button>
+            <button class="driver-action" onclick="whatsappDriver()" title="WhatsApp Driver">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div id="loading-state" class="loading-state">
+        <div class="spinner"></div>
+        <p>Loading form...</p>
+      </div>
+
+      <form id="order-form" class="hidden">
+        <div class="form-section">
+          <div class="section-title">Contact Details</div>
+          <div id="contact-fields"></div>
+        </div>
+
+        <div class="form-section">
+          <div class="section-title">Order Information</div>
+          <div id="order-fields"></div>
+        </div>
+
+        <div class="form-section hidden" id="delivery-section">
+          <div class="section-title">Delivery Address</div>
+          <div id="delivery-fields"></div>
+
+          <div class="location-box">
+            <div class="location-header">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+              <span>Qatar National Address</span>
+            </div>
+            <div class="location-grid">
+              <div class="location-field">
+                <div class="loc-field-header">
+                  <label>Zone</label>
+                  <button type="button" class="field-toggle" onclick="toggleFieldMode('zone')">Enter manually</button>
+                </div>
+                <div id="zone-dropdown-mode"><select id="zone_number"><option value="">Select</option></select></div>
+                <div id="zone-manual-mode" class="hidden"><input type="text" id="zone_number_manual" placeholder="e.g. 25"></div>
+              </div>
+              <div class="location-field">
+                <div class="loc-field-header">
+                  <label>Street</label>
+                  <button type="button" class="field-toggle" onclick="toggleFieldMode('street')">Enter manually</button>
+                </div>
+                <div id="street-dropdown-mode"><select id="street_number" disabled><option value="">Select zone</option></select></div>
+                <div id="street-manual-mode" class="hidden"><input type="text" id="street_number_manual" placeholder="e.g. 123"></div>
+              </div>
+              <div class="location-field">
+                <div class="loc-field-header">
+                  <label>Building</label>
+                  <button type="button" class="field-toggle" onclick="toggleFieldMode('building')">Enter manually</button>
+                </div>
+                <div id="building-dropdown-mode"><select id="building_number" disabled><option value="">Select street</option></select></div>
+                <div id="building-manual-mode" class="hidden"><input type="text" id="building_number_manual" placeholder="e.g. 45"></div>
+              </div>
+            </div>
+          </div>
+          <div id="delivery-extra-fields" style="margin-top:16px"></div>
+        </div>
+
+        <div class="form-footer">
+          <div id="form-error" class="error-msg"></div>
+          <button type="submit" class="submit-btn" id="submit-btn">Place Order</button>
+        </div>
+      </form>
+
+      <div id="success-state" class="success-state">
+        <div class="success-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+        </div>
+        <h2 id="success-title">Order Submitted!</h2>
+        <p>Thank you for your order.</p>
+        <div class="order-id" id="order-id-display"></div>
+        <button class="new-order-btn" onclick="resetForm()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+          New Order
+        </button>
+      </div>
+
+      <div id="event-closed" class="event-closed hidden">
+        <div class="event-closed-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
+        </div>
+        <h2>Event Closed</h2>
+        <p>Order registration for this event has been closed. Thank you for your interest!</p>
+        <a href="/home" class="home-btn">Back to Home</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="/assets/frappe/js/lib/jquery/jquery.min.js"></script>
+<script>
+// Simple frappe.call implementation for standalone pages
+if (typeof frappe === 'undefined') {
+  window.frappe = {
+    call: function(opts) {
+      return new Promise((resolve, reject) => {
+        $.ajax({
+          url: '/api/method/' + opts.method,
+          type: 'POST',
+          data: opts.args || {},
+          dataType: 'json',
+          success: function(data) { resolve(data); },
+          error: function(xhr, status, error) { reject(error); }
+        });
+      });
+    }
+  };
+}
+</script>
+<script>
+let doctypeFields = [];
+let buildings = [];
+let manualMode = { zone: false, street: false, building: false };
+let editingOrderId = null;
+let currentDriver = null;
+
+const FIELD_GROUPS = {
+  contact: ['name1', 'mobile', 'contact_number', 'whatsapp_number', 'copy_mobile_to_whatsapp', 'order_co'],
+  order: ['order_type', 'no_of_biriyani', 'contribution_amount'],
+  delivery: ['accommodation_area'],
+  deliveryExtra: ['door_number', 'accommodation_type', 'compound_name'],
+  excluded: ['assigned_volunteer', 'coordinate', 'delivery_needed', 'zone_number', 'street_number', 'building_number'],
+  layout: ['Section Break', 'Column Break', 'Tab Break']
+};
+
+function switchTab(tab, skipReset = false) {
+  document.getElementById('tab-new').classList.toggle('active', tab === 'new');
+  document.getElementById('tab-search').classList.toggle('active', tab === 'search');
+  document.getElementById('search-panel').classList.toggle('hidden', tab === 'new');
+  document.getElementById('order-card').classList.toggle('hidden', tab === 'search');
+  if (tab === 'new' && !skipReset) cancelEdit();
+}
+
+async function searchOrders() {
+  const phone = document.getElementById('search-phone').value.trim();
+  const btn = document.getElementById('search-btn');
+  const results = document.getElementById('search-results');
+  if (phone.length < 8) { results.innerHTML = '<div class="search-empty">Enter at least 8 digits</div>'; return; }
+  btn.disabled = true; btn.textContent = 'Searching...';
+  results.innerHTML = '<div class="search-empty"><div class="spinner"></div></div>';
+  try {
+    const res = await frappe.call({ method: 'foodcharity.api.search_orders_by_phone', args: { phone } });
+    const orders = res.message || [];
+    if (orders.length === 0) {
+      results.innerHTML = '<div class="search-empty">No orders found</div>';
+    } else {
+      results.innerHTML = orders.map(o => {
+        const status = o.order_status || 'Pending';
+        const statusClass = status.toLowerCase().replace(/ /g, '-');
+        return `
+        <div class="result-card" onclick="loadOrder('${o.name}')">
+          <div class="result-header">
+            <span class="result-name">${o.name1 || 'No Name'}</span>
+            <span class="result-status ${statusClass}">${status}</span>
+          </div>
+          <div class="result-details">
+            <span class="result-detail"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72"/></svg>${o.mobile || '-'}</span>
+            <span class="result-detail">${o.order_type || '-'}</span>
+            ${o.no_of_biriyani ? `<span class="result-detail"><strong>${o.no_of_biriyani}</strong> Biriyani</span>` : ''}
+            ${o.collected_amount ? `<span class="result-detail result-collected">QAR ${o.collected_amount} Collected</span>` : ''}
+          </div>
+          <div style="margin-top:6px;font-size:11px;color:#888">${o.name}</div>
+        </div>`;
+      }).join('');
+    }
+  } catch (e) { results.innerHTML = '<div class="search-empty">Error searching</div>'; }
+  btn.disabled = false; btn.textContent = 'Search';
+}
+
+async function loadOrder(orderId) {
+  try {
+    const res = await frappe.call({ method: 'foodcharity.api.get_order', args: { order_id: orderId } });
+    const order = res.message;
+    if (!order) { alert('Order not found'); return; }
+    editingOrderId = orderId;
+    switchTab('new', true);  // Skip reset when loading order for editing
+
+    // Make sure form is visible and success state is hidden
+    document.getElementById('success-state').classList.remove('show');
+    document.getElementById('order-form').classList.remove('hidden');
+    document.getElementById('loading-state').classList.add('hidden');
+
+    document.getElementById('update-header').classList.remove('hidden');
+    document.getElementById('editing-order-id').textContent = orderId;
+    document.getElementById('submit-btn').textContent = 'Update Order';
+    document.getElementById('submit-btn').classList.add('update');
+    // Show driver info if assigned
+    if (order.driver) {
+      currentDriver = order.driver;
+      document.getElementById('driver-info').classList.remove('hidden');
+      document.getElementById('driver-avatar').textContent = order.driver.name.charAt(0).toUpperCase();
+      document.getElementById('driver-name').textContent = order.driver.name;
+      document.getElementById('driver-mobile').textContent = order.driver.mobile;
+    } else {
+      currentDriver = null;
+      document.getElementById('driver-info').classList.add('hidden');
+    }
+    setTimeout(() => {
+      Object.keys(order).forEach(key => {
+        const el = document.getElementById(key);
+        if (el) {
+          let val = order[key] || '';
+          // Strip country code prefix for display in phone fields
+          if (key === 'mobile' && typeof val === 'string' && val.startsWith('+974')) val = val.substring(4);
+          if (key === 'whatsapp_number' && typeof val === 'string') {
+            if (val.startsWith('+974')) { val = val.substring(4); document.getElementById('whatsapp_cc').value = '+974'; }
+            else if (val.startsWith('+91')) { val = val.substring(3); document.getElementById('whatsapp_cc').value = '+91'; }
+          }
+          el.type === 'checkbox' ? el.checked = !!order[key] : el.value = val;
+        }
+      });
+      const orderType = document.getElementById('order_type');
+      if (orderType) orderType.dispatchEvent(new Event('change'));
+      if (order.zone_number) { if (!manualMode.zone) toggleFieldMode('zone'); document.getElementById('zone_number_manual').value = order.zone_number; }
+      if (order.street_number) { if (!manualMode.street) toggleFieldMode('street'); document.getElementById('street_number_manual').value = order.street_number; }
+      if (order.building_number) { if (!manualMode.building) toggleFieldMode('building'); document.getElementById('building_number_manual').value = order.building_number; }
+    }, 100);
+  } catch (e) { alert('Error loading order'); }
+}
+
+function cancelEdit() {
+  editingOrderId = null;
+  currentDriver = null;
+  document.getElementById('update-header').classList.add('hidden');
+  document.getElementById('driver-info').classList.add('hidden');
+  document.getElementById('submit-btn').textContent = 'Place Order';
+  document.getElementById('submit-btn').classList.remove('update');
+  resetFormFields();
+}
+
+function callDriver() {
+  if (currentDriver?.mobile) window.location.href = 'tel:' + currentDriver.mobile;
+}
+
+function whatsappDriver() {
+  if (currentDriver?.mobile) {
+    let phone = currentDriver.mobile.replace(/[^0-9]/g, '');
+    if (!phone.startsWith('974')) phone = '974' + phone;
+    window.open('https://wa.me/' + phone, '_blank');
+  }
+}
+
+function resetFormFields() {
+  document.getElementById('order-form').reset();
+  document.getElementById('delivery-section').classList.add('hidden');
+  document.getElementById('street_number').innerHTML = '<option value="">Select zone</option>'; document.getElementById('street_number').disabled = true;
+  document.getElementById('building_number').innerHTML = '<option value="">Select street</option>'; document.getElementById('building_number').disabled = true;
+  ['zone_number_manual', 'street_number_manual', 'building_number_manual'].forEach(id => document.getElementById(id).value = '');
+  ['zone', 'street', 'building'].forEach(field => { if (manualMode[field]) toggleFieldMode(field); });
+}
+
+async function initForm() {
+  try {
+    console.log('Starting initForm...');
+    const response = await frappe.call({ method: 'foodcharity.api.get_doctype_fields', args: { doctype: 'Orders' } });
+    console.log('Got fields:', response);
+    doctypeFields = response.message || [];
+    console.log('Rendering fields...');
+    renderFields();
+    console.log('Loading zones...');
+    loadZones();
+    document.getElementById('loading-state').classList.add('hidden');
+    document.getElementById('order-form').classList.remove('hidden');
+    console.log('Setting up events...');
+    setupEvents();
+    console.log('Form init complete');
+  } catch (error) {
+    console.error('Form init error:', error);
+    document.getElementById('loading-state').innerHTML = '<p style="color:#ef4444">Failed to load: ' + (error.message || error) + '</p>';
+  }
+}
+
+function renderFields() {
+  try {
+    const fields = doctypeFields.filter(f => !FIELD_GROUPS.excluded.includes(f.fieldname) && !FIELD_GROUPS.layout.includes(f.fieldtype) && !f.hidden && !f.read_only);
+    ['contact', 'order', 'delivery', 'deliveryExtra'].forEach(group => {
+      const container = document.getElementById(group === 'deliveryExtra' ? 'delivery-extra-fields' : group + '-fields');
+      if (!container) { console.error('Container not found:', group); return; }
+      fields.filter(f => FIELD_GROUPS[group].includes(f.fieldname)).forEach(f => {
+        try { container.appendChild(createField(f)); } catch (e) { console.error('Error creating field:', f.fieldname, e); }
+      });
+    });
+  } catch (e) { console.error('renderFields error:', e); throw e; }
+}
+
+function createField(field) {
+  const div = document.createElement('div');
+  div.className = 'field'; div.id = `field-${field.fieldname}`;
+  const showRequired = field.reqd || ['accommodation_area', 'accommodation_type'].includes(field.fieldname);
+  if (field.fieldname === 'contribution_amount') div.classList.add('hidden');
+  // Custom label for contact_number
+  let fieldLabel = field.label;
+  if (field.fieldname === 'contact_number') fieldLabel = 'Contact Number (Optional)';
+
+  // Phone fields with country code
+  if (field.fieldname === 'mobile') {
+    div.innerHTML = `<label class="field-label">${fieldLabel}${showRequired ? '<span class="req">*</span>' : ''}</label>
+      <div class="phone-field">
+        <span class="country-code-fixed">+974</span>
+        <input type="tel" id="${field.fieldname}" class="field-input phone-input" data-fieldname="${field.fieldname}" placeholder="Phone number" maxlength="8">
+      </div>`;
+  } else if (field.fieldname === 'whatsapp_number') {
+    div.innerHTML = `<label class="field-label">${fieldLabel}${showRequired ? '<span class="req">*</span>' : ''}</label>
+      <div class="phone-field">
+        <select id="whatsapp_cc" class="country-code-select">
+          <option value="+974">+974</option>
+          <option value="+91">+91</option>
+        </select>
+        <input type="tel" id="${field.fieldname}" class="field-input phone-input" data-fieldname="${field.fieldname}" placeholder="Phone number" maxlength="10">
+      </div>`;
+  } else if (field.fieldtype === 'Check') {
+    div.innerHTML = `<div class="checkbox-field"><input type="checkbox" id="${field.fieldname}" class="checkbox-input" data-fieldname="${field.fieldname}"><label for="${field.fieldname}" class="checkbox-label">${fieldLabel}</label></div>`;
+  } else if (field.fieldtype === 'Select') {
+    const opts = (field.options || '').split('\n').filter(o => o.trim());
+    div.innerHTML = `<label class="field-label">${fieldLabel}${showRequired ? '<span class="req">*</span>' : ''}</label><select id="${field.fieldname}" class="field-select" data-fieldname="${field.fieldname}"><option value="">Select...</option>${opts.map(o => `<option value="${o}">${o}</option>`).join('')}</select>`;
+  } else if (field.fieldtype === 'Int') {
+    div.innerHTML = `<label class="field-label">${fieldLabel}</label><input type="number" id="${field.fieldname}" class="field-input" data-fieldname="${field.fieldname}" min="1" placeholder="0">`;
+  } else if (field.fieldtype === 'Currency') {
+    div.innerHTML = `<label class="field-label">${fieldLabel}<span class="req">*</span></label><input type="number" id="${field.fieldname}" class="field-input" data-fieldname="${field.fieldname}" step="0.01" min="0" placeholder="0.00">`;
+  } else {
+    div.innerHTML = `<label class="field-label">${fieldLabel}${showRequired ? '<span class="req">*</span>' : ''}</label><input type="text" id="${field.fieldname}" class="field-input" data-fieldname="${field.fieldname}" placeholder="Enter ${fieldLabel.toLowerCase()}">`;
+  }
+  return div;
+}
+
+function setupEvents() {
+  const orderType = document.getElementById('order_type');
+  if (orderType) {
+    orderType.addEventListener('change', function() {
+      const isDelivery = this.value === 'Delivery', isContrib = this.value === 'Contribution Only', needsBiriyani = this.value === 'Delivery' || this.value === 'Self Pickup';
+      document.getElementById('delivery-section').classList.toggle('hidden', !isDelivery);
+      const bf = document.getElementById('field-no_of_biriyani'), bi = document.getElementById('no_of_biriyani');
+      if (bf && bi) { bf.classList.toggle('hidden', isContrib); bi.required = needsBiriyani; const lbl = bf.querySelector('.field-label'); if (lbl) lbl.innerHTML = 'No of Biriyani' + (needsBiriyani ? '<span class="req">*</span>' : ''); }
+      const cf = document.getElementById('field-contribution_amount'), ci = document.getElementById('contribution_amount');
+      if (cf && ci) { cf.classList.toggle('hidden', !isContrib); ci.required = isContrib; const lbl = cf.querySelector('.field-label'); if (lbl) lbl.innerHTML = 'Contribution Amount' + (isContrib ? '<span class="req">*</span>' : ''); }
+      updateVisibility();
+    });
+  }
+  const copyCheck = document.getElementById('copy_mobile_to_whatsapp');
+  if (copyCheck) copyCheck.addEventListener('change', function() {
+    if (this.checked) {
+      document.getElementById('whatsapp_number').value = document.getElementById('mobile').value || '';
+      document.getElementById('whatsapp_cc').value = '+974';
+    }
+  });
+  const mobile = document.getElementById('mobile');
+  if (mobile) mobile.addEventListener('input', function() {
+    if (document.getElementById('copy_mobile_to_whatsapp')?.checked) {
+      document.getElementById('whatsapp_number').value = this.value;
+      document.getElementById('whatsapp_cc').value = '+974';
+    }
+  });
+  const accType = document.getElementById('accommodation_type');
+  if (accType) accType.addEventListener('change', updateVisibility);
+  document.getElementById('zone_number').addEventListener('change', function() { loadStreets(this.value); });
+  document.getElementById('street_number').addEventListener('change', function() { loadBuildings(document.getElementById('zone_number').value, this.value); });
+  document.getElementById('order-form').addEventListener('submit', handleSubmit);
+  document.getElementById('search-phone').addEventListener('keypress', function(e) { if (e.key === 'Enter') searchOrders(); });
+}
+
+function updateVisibility() {
+  const compound = document.getElementById('field-compound_name');
+  if (compound) compound.classList.toggle('hidden', document.getElementById('accommodation_type')?.value !== 'Villa Compound');
+}
+
+function toggleFieldMode(field) {
+  manualMode[field] = !manualMode[field];
+  document.getElementById(`${field}-dropdown-mode`).classList.toggle('hidden', manualMode[field]);
+  document.getElementById(`${field}-manual-mode`).classList.toggle('hidden', !manualMode[field]);
+  const btn = document.querySelector(`#${field}-dropdown-mode, #${field}-manual-mode`).parentElement.querySelector('.field-toggle');
+  if (btn) btn.textContent = manualMode[field] ? 'Use dropdown' : 'Enter manually';
+}
+
+async function loadZones() {
+  try { const res = await frappe.call({ method: 'foodcharity.api.get_zones' }); document.getElementById('zone_number').innerHTML = '<option value="">Select</option>' + (res.message || []).map(z => `<option value="${z.value}">${z.label}</option>`).join(''); } catch (e) {}
+}
+
+async function loadStreets(zone) {
+  const street = document.getElementById('street_number'), building = document.getElementById('building_number');
+  if (!zone) { street.innerHTML = '<option value="">Select zone</option>'; street.disabled = true; building.innerHTML = '<option value="">Select street</option>'; building.disabled = true; return; }
+  street.innerHTML = '<option value="">Loading...</option>'; street.disabled = true;
+  try { const res = await frappe.call({ method: 'foodcharity.api.get_streets', args: { zone_number: zone } }); street.innerHTML = '<option value="">Select</option>' + (res.message || []).map(s => `<option value="${s.value}">${s.label}</option>`).join(''); street.disabled = false; building.innerHTML = '<option value="">Select street</option>'; building.disabled = true; } catch (e) { street.innerHTML = '<option value="">Error</option>'; }
+}
+
+async function loadBuildings(zone, streetNum) {
+  const building = document.getElementById('building_number');
+  if (!streetNum) { building.innerHTML = '<option value="">Select street</option>'; building.disabled = true; return; }
+  building.innerHTML = '<option value="">Loading...</option>'; building.disabled = true;
+  try { const res = await frappe.call({ method: 'foodcharity.api.get_buildings', args: { zone_number: zone, street_number: streetNum } }); buildings = res.message || []; building.innerHTML = '<option value="">Select</option>' + buildings.map(b => `<option value="${b.value}">${b.label}</option>`).join(''); building.disabled = false; } catch (e) { building.innerHTML = '<option value="">Error</option>'; }
+}
+
+async function handleSubmit(e) {
+  e.preventDefault();
+  const btn = document.getElementById('submit-btn'), errDiv = document.getElementById('form-error');
+  btn.disabled = true; btn.textContent = editingOrderId ? 'Updating...' : 'Submitting...'; errDiv.classList.remove('show');
+  const data = {};
+  document.querySelectorAll('[data-fieldname]').forEach(el => { data[el.dataset.fieldname] = el.type === 'checkbox' ? (el.checked ? 1 : 0) : el.value; });
+  // Prepend country code to phone numbers
+  if (data.mobile && !data.mobile.startsWith('+')) data.mobile = '+974' + data.mobile;
+  const whatsappCC = document.getElementById('whatsapp_cc')?.value || '+974';
+  if (data.whatsapp_number && !data.whatsapp_number.startsWith('+')) data.whatsapp_number = whatsappCC + data.whatsapp_number;
+  const orderType = data.order_type, isDelivery = orderType === 'Delivery', isContrib = orderType === 'Contribution Only', needsBiriyani = orderType === 'Delivery' || orderType === 'Self Pickup';
+  const errors = [];
+  if (!data.name1) errors.push('Name required'); if (!document.getElementById('mobile').value) errors.push('Mobile required'); if (!document.getElementById('whatsapp_number').value) errors.push('WhatsApp required'); if (!orderType) errors.push('Order Type required');
+  if (needsBiriyani && !data.no_of_biriyani) errors.push('No of Biriyani required'); if (isContrib && !data.contribution_amount) errors.push('Contribution Amount required');
+  data.zone_number = manualMode.zone ? document.getElementById('zone_number_manual').value.trim() : document.getElementById('zone_number').value;
+  data.street_number = manualMode.street ? document.getElementById('street_number_manual').value.trim() : document.getElementById('street_number').value;
+  data.building_number = manualMode.building ? document.getElementById('building_number_manual').value.trim() : document.getElementById('building_number').value;
+
+  // Try to get coordinates from buildings array first
+  if (!manualMode.building && data.building_number) {
+    const b = buildings.find(x => x.value === data.building_number);
+    if (b?.x && b?.y) data.coordinate = `${b.x},${b.y}`;
+  }
+
+  // If no coordinates and we have zone/street/building, fetch from API
+  if (!data.coordinate && data.zone_number && data.street_number && data.building_number) {
+    try {
+      const locRes = await frappe.call({
+        method: 'foodcharity.api.get_building_coordinates',
+        args: { zone_number: data.zone_number, street_number: data.street_number, building_number: data.building_number }
+      });
+      if (locRes.message?.latitude && locRes.message?.longitude) {
+        data.coordinate = `${locRes.message.latitude},${locRes.message.longitude}`;
+      }
+    } catch (e) { console.log('Could not fetch coordinates'); }
+  }
+
+  if (isDelivery) {
+    if (!data.accommodation_area) errors.push('Area required'); if (!data.zone_number) errors.push('Zone required'); if (!data.street_number) errors.push('Street required'); if (!data.building_number) errors.push('Building required'); if (!data.accommodation_type) errors.push('Accommodation Type required');
+    if (data.accommodation_type === 'Villa Compound' && !data.compound_name) errors.push('Compound Name required');
+  }
+  if (errors.length > 0) { errDiv.textContent = errors.join(', '); errDiv.classList.add('show'); btn.disabled = false; btn.textContent = editingOrderId ? 'Update Order' : 'Place Order'; return; }
+  data.delivery_needed = isDelivery ? 'Yes' : 'No';
+  try {
+    const res = editingOrderId ? await frappe.call({ method: 'foodcharity.api.update_guest_order', args: { order_id: editingOrderId, data: JSON.stringify(data) } }) : await frappe.call({ method: 'foodcharity.api.create_guest_order', args: { data: JSON.stringify(data) } });
+    if (res.message?.success) { document.getElementById('order-id-display').textContent = res.message.order_id; document.getElementById('success-title').textContent = editingOrderId ? 'Order Updated!' : 'Order Submitted!'; document.getElementById('order-form').classList.add('hidden'); document.getElementById('update-header').classList.add('hidden'); document.getElementById('success-state').classList.add('show'); editingOrderId = null; } else { throw new Error(res.message?.error || 'Failed'); }
+  } catch (err) { errDiv.textContent = err.message || 'Something went wrong'; errDiv.classList.add('show'); }
+  btn.disabled = false; btn.textContent = editingOrderId ? 'Update Order' : 'Place Order'; btn.classList.toggle('update', !!editingOrderId);
+}
+
+function resetForm() {
+  editingOrderId = null;
+  document.getElementById('order-form').reset(); document.getElementById('success-state').classList.remove('show'); document.getElementById('order-form').classList.remove('hidden'); document.getElementById('update-header').classList.add('hidden');
+  document.getElementById('submit-btn').textContent = 'Place Order'; document.getElementById('submit-btn').classList.remove('update'); document.getElementById('delivery-section').classList.add('hidden');
+  document.getElementById('street_number').innerHTML = '<option value="">Select zone</option>'; document.getElementById('street_number').disabled = true;
+  document.getElementById('building_number').innerHTML = '<option value="">Select street</option>'; document.getElementById('building_number').disabled = true;
+  ['zone_number_manual', 'street_number_manual', 'building_number_manual'].forEach(id => document.getElementById(id).value = '');
+  ['zone', 'street', 'building'].forEach(field => { if (manualMode[field]) toggleFieldMode(field); });
+}
+
+async function loadEventSettings() {
+  try {
+    const res = await frappe.call({ method: 'foodcharity.api.get_event_settings' });
+    const settings = res.message || {};
+    if (settings.name) document.getElementById('event-name').textContent = settings.name;
+    if (settings.subtitle) document.getElementById('event-subtitle').textContent = settings.subtitle;
+    if (settings.date) document.getElementById('event-date-text').textContent = settings.date;
+    if (settings.enabled === false) {
+      document.getElementById('loading-state').classList.add('hidden');
+      document.getElementById('order-form').classList.add('hidden');
+      document.getElementById('event-closed').classList.remove('hidden');
+      document.querySelector('.tabs').classList.add('hidden');
+      return false;
+    }
+    return true;
+  } catch (e) {
+    console.error('Event settings error:', e);
+    return true;
+  }
+}
+
+async function initPage() {
+  const eventEnabled = await loadEventSettings();
+  if (eventEnabled) initForm();
+}
+
+document.addEventListener('DOMContentLoaded', initPage);
+</script>
+
+</body>
+</html>

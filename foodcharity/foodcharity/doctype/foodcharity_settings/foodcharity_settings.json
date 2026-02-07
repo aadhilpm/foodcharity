@@ -1,0 +1,199 @@
+{
+ "actions": [],
+ "allow_rename": 0,
+ "creation": "2024-02-07 12:00:00.000000",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "event_section",
+  "event_enabled",
+  "event_name",
+  "column_break_event",
+  "event_date",
+  "event_subtitle",
+  "per_biriyani_charge",
+  "coordinator_password",
+  "qnas_api_section",
+  "qnas_api_token",
+  "qnas_api_domain",
+  "column_break_qnas",
+  "qnas_enabled",
+  "sync_section",
+  "sync_qnas_data",
+  "sync_buildings_only",
+  "column_break_sync",
+  "last_synced",
+  "last_synced_street_index",
+  "sync_status_section",
+  "total_zones",
+  "total_streets",
+  "total_buildings",
+  "synced_buildings"
+ ],
+ "fields": [
+  {
+   "fieldname": "event_section",
+   "fieldtype": "Section Break",
+   "label": "Event Configuration"
+  },
+  {
+   "default": "1",
+   "fieldname": "event_enabled",
+   "fieldtype": "Check",
+   "label": "Event Enabled",
+   "description": "Uncheck to close/disable the order form"
+  },
+  {
+   "default": "Biriyani Challenge 2026",
+   "fieldname": "event_name",
+   "fieldtype": "Data",
+   "label": "Event Name"
+  },
+  {
+   "fieldname": "column_break_event",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "event_date",
+   "fieldtype": "Date",
+   "label": "Event Date"
+  },
+  {
+   "default": "Thanal Milestone CDC",
+   "fieldname": "event_subtitle",
+   "fieldtype": "Data",
+   "label": "Event Subtitle"
+  },
+  {
+   "fieldname": "per_biriyani_charge",
+   "fieldtype": "Currency",
+   "label": "Per Biriyani Charge",
+   "default": "20",
+   "description": "Amount to charge per biriyani for delivery orders"
+  },
+  {
+   "fieldname": "coordinator_password",
+   "fieldtype": "Password",
+   "label": "Coordinator Password",
+   "description": "Password for coordinator dashboard access"
+  },
+  {
+   "fieldname": "qnas_api_section",
+   "fieldtype": "Section Break",
+   "label": "Qatar National Address System (QNAS)"
+  },
+  {
+   "fieldname": "qnas_api_token",
+   "fieldtype": "Password",
+   "label": "API Token",
+   "description": "Your QNAS API token. Register at qnas.qa to get one."
+  },
+  {
+   "fieldname": "qnas_api_domain",
+   "fieldtype": "Data",
+   "label": "Registered Domain",
+   "description": "The domain registered with your QNAS API token"
+  },
+  {
+   "fieldname": "column_break_qnas",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "0",
+   "fieldname": "qnas_enabled",
+   "fieldtype": "Check",
+   "label": "Enable QNAS Integration",
+   "description": "When enabled, location picker will use authenticated API with higher rate limits"
+  },
+  {
+   "fieldname": "sync_section",
+   "fieldtype": "Section Break",
+   "label": "Data Sync"
+  },
+  {
+   "fieldname": "sync_qnas_data",
+   "fieldtype": "Button",
+   "label": "Sync All QNAS Data",
+   "options": "sync_qnas_data",
+   "description": "Sync zones, streets, and buildings from scratch"
+  },
+  {
+   "fieldname": "sync_buildings_only",
+   "fieldtype": "Button",
+   "label": "Sync Buildings Only",
+   "options": "sync_buildings_only",
+   "description": "Resume syncing buildings from last position"
+  },
+  {
+   "fieldname": "column_break_sync",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "last_synced",
+   "fieldtype": "Datetime",
+   "label": "Last Synced",
+   "read_only": 1
+  },
+  {
+   "fieldname": "last_synced_street_index",
+   "fieldtype": "Int",
+   "label": "Last Synced Street Index",
+   "read_only": 1,
+   "description": "Used for resuming building sync"
+  },
+  {
+   "fieldname": "sync_status_section",
+   "fieldtype": "Section Break",
+   "label": "Sync Status"
+  },
+  {
+   "fieldname": "total_zones",
+   "fieldtype": "Int",
+   "label": "Total Zones",
+   "read_only": 1
+  },
+  {
+   "fieldname": "total_streets",
+   "fieldtype": "Int",
+   "label": "Total Streets",
+   "read_only": 1
+  },
+  {
+   "fieldname": "total_buildings",
+   "fieldtype": "Int",
+   "label": "Total Buildings",
+   "read_only": 1
+  },
+  {
+   "fieldname": "synced_buildings",
+   "fieldtype": "Int",
+   "label": "Synced Buildings",
+   "read_only": 1,
+   "description": "Buildings synced in current/last sync operation"
+  }
+ ],
+ "index_web_pages_for_search": 0,
+ "issingle": 1,
+ "links": [],
+ "modified": "2024-02-07 12:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Foodcharity",
+ "name": "Foodcharity Settings",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "print": 1,
+   "read": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1
+}

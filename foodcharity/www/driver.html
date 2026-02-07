@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Driver Portal | Thanal Milestone</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{font-family:'Inter',system-ui,sans-serif;background:#f5f5f5;color:#1a1a1a;min-height:100vh}
+
+    /* Header */
+    .header{background:#2563eb;padding:16px 20px;position:sticky;top:0;z-index:100}
+    .header-content{display:flex;justify-content:space-between;align-items:center}
+    .header h1{color:#fff;font-size:18px;font-weight:600}
+    .header .subtitle{color:rgba(255,255,255,0.8);font-size:12px}
+    .logout-btn{background:rgba(255,255,255,0.15);color:#fff;border:none;padding:8px 14px;border-radius:6px;font-size:13px;font-weight:500;cursor:pointer}
+
+    /* Summary Bar */
+    .summary-bar{background:#fff;padding:16px 20px;border-bottom:1px solid #eee;display:flex;gap:20px;overflow-x:auto}
+    .summary-item{text-align:center;min-width:80px}
+    .summary-value{font-size:24px;font-weight:700;color:#2563eb}
+    .summary-value.green{color:#16a34a}
+    .summary-label{font-size:11px;color:#666;text-transform:uppercase;letter-spacing:0.5px}
+
+    /* Status Counts */
+    .status-counts{background:#fff;padding:10px 16px;display:flex;gap:8px;flex-wrap:wrap;border-bottom:1px solid #eee}
+    .scount{padding:6px 12px;border-radius:16px;font-size:12px;font-weight:500;cursor:pointer}
+    .scount.assigned{background:#dbeafe;color:#1d4ed8}
+    .scount.out{background:#fae8ff;color:#a21caf}
+    .scount.delivered{background:#dcfce7;color:#16a34a}
+    .scount.collected{background:#d1fae5;color:#047857}
+
+    /* Main Content */
+    .main{padding:16px}
+
+    /* Login Card */
+    .login-card{background:#fff;border-radius:12px;padding:24px;max-width:400px;margin:40px auto}
+    .login-title{font-size:20px;font-weight:600;margin-bottom:4px}
+    .login-subtitle{font-size:14px;color:#666;margin-bottom:20px}
+    .field{margin-bottom:16px}
+    .field-label{display:block;font-size:13px;font-weight:500;color:#333;margin-bottom:6px}
+    .field-input{width:100%;padding:14px;font-size:16px;border:1px solid #ddd;border-radius:8px;font-family:inherit}
+    .field-input:focus{outline:none;border-color:#2563eb}
+    .login-btn{width:100%;padding:14px;font-size:16px;font-weight:600;background:#2563eb;color:#fff;border:none;border-radius:8px;cursor:pointer;margin-top:8px}
+    .login-btn:disabled{opacity:0.6}
+    .login-error{background:#fef2f2;color:#dc2626;padding:12px;border-radius:8px;font-size:13px;margin-bottom:16px;display:none}
+    .login-error.show{display:block}
+
+    /* Order Card */
+    .order-card{background:#fff;border-radius:12px;margin-bottom:12px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,0.05)}
+    .order-header{padding:16px;border-bottom:1px solid #f0f0f0}
+    .order-header-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px}
+    .order-name{font-size:16px;font-weight:600;color:#111}
+    .order-id{font-size:11px;color:#2563eb;background:#eff6ff;padding:4px 8px;border-radius:4px;font-weight:500}
+    .order-meta{display:flex;flex-wrap:wrap;gap:12px;font-size:13px;color:#666}
+    .order-meta-item{display:flex;align-items:center;gap:4px}
+    .order-meta-item svg{width:14px;height:14px;color:#888}
+
+    /* Order Address */
+    .order-address{padding:12px 16px;background:#f9fafb}
+    .address-label{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;color:#888;margin-bottom:4px}
+    .address-text{font-size:14px;color:#333}
+
+    /* Order Amount */
+    .order-amount{padding:16px;border-top:1px solid #f0f0f0}
+    .amount-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+    .amount-row:last-child{margin-bottom:0}
+    .amount-label{font-size:13px;color:#666}
+    .amount-value{font-size:15px;font-weight:600;color:#111}
+    .amount-value.total{color:#2563eb;font-size:18px}
+    .amount-value.extra{color:#16a34a}
+    .amount-value.pending{color:#dc2626}
+
+    /* Collection Input */
+    .collection-row{display:flex;gap:8px;align-items:center;margin-top:12px;padding-top:12px;border-top:1px solid #f0f0f0}
+    .collection-input{flex:1;padding:12px;font-size:16px;border:1px solid #ddd;border-radius:8px;font-family:inherit}
+    .collection-input:focus{outline:none;border-color:#2563eb}
+    .save-btn{padding:12px 20px;font-size:14px;font-weight:600;background:#16a34a;color:#fff;border:none;border-radius:8px;cursor:pointer}
+    .save-btn:disabled{opacity:0.6}
+    .save-btn.saved{background:#ddd;color:#666}
+
+    /* Remark */
+    .remark-section{padding:12px 16px;border-top:1px solid #f0f0f0;background:#fafafa}
+    .remark-label{font-size:11px;color:#888;text-transform:uppercase;margin-bottom:6px}
+    .remark-input{width:100%;padding:10px;font-size:14px;border:1px solid #ddd;border-radius:6px;font-family:inherit;resize:none}
+    .remark-input:focus{outline:none;border-color:#2563eb}
+    .remark-display{font-size:13px;color:#666;font-style:italic}
+
+    /* Order Actions */
+    .order-actions{display:flex;border-top:1px solid #f0f0f0}
+    .action-btn{flex:1;display:flex;align-items:center;justify-content:center;gap:6px;padding:14px;font-size:13px;font-weight:500;background:none;border:none;cursor:pointer;color:#555;border-right:1px solid #f0f0f0}
+    .action-btn:last-child{border-right:none}
+    .action-btn svg{width:18px;height:18px}
+    .action-btn.map{color:#16a34a}
+    .action-btn.call{color:#2563eb}
+    .action-btn.whatsapp{color:#25d366}
+    .action-btn:active{background:#f5f5f5}
+
+    /* Status Badge */
+    .status-badge{display:inline-block;padding:4px 10px;border-radius:12px;font-size:11px;font-weight:600;text-transform:uppercase}
+    .status-badge.pending{background:#fef3c7;color:#b45309}
+    .status-badge.assigned{background:#dbeafe;color:#1d4ed8}
+    .status-badge.out-for-delivery{background:#fae8ff;color:#a21caf}
+    .status-badge.delivered{background:#dcfce7;color:#16a34a}
+    .status-badge.collected{background:#d1fae5;color:#047857}
+
+    /* Status Actions */
+    .status-actions{padding:12px 16px;border-top:1px solid #f0f0f0;display:flex;gap:8px;flex-wrap:wrap}
+    .status-btn{padding:10px 16px;font-size:13px;font-weight:500;border:none;border-radius:8px;cursor:pointer}
+    .status-btn.out{background:#a21caf;color:#fff}
+    .status-btn.delivered{background:#16a34a;color:#fff}
+    .status-btn.collected{background:#047857;color:#fff}
+    .status-btn:disabled{opacity:0.5;cursor:not-allowed}
+
+    /* Search Bar */
+    .search-bar{padding:12px 16px;background:#fff;border-bottom:1px solid #eee;display:flex;gap:8px}
+    .search-input{flex:1;padding:10px 14px;font-size:14px;border:1px solid #ddd;border-radius:8px;font-family:inherit}
+    .search-input:focus{outline:none;border-color:#2563eb}
+    .filter-select{padding:10px 12px;font-size:13px;border:1px solid #ddd;border-radius:8px;font-family:inherit;background:#fff}
+
+    /* Collapsed Card */
+    .order-card.collapsed .order-address,
+    .order-card.collapsed .order-amount,
+    .order-card.collapsed .wa-messages,
+    .order-card.collapsed .status-actions,
+    .order-card.collapsed .order-actions{display:none}
+    .order-card .expand-btn{position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;padding:8px;cursor:pointer;color:#888}
+    .order-card .expand-btn svg{width:20px;height:20px;transition:transform 0.2s}
+    .order-card.collapsed .expand-btn svg{transform:rotate(-90deg)}
+    .order-header{position:relative;padding-right:40px}
+
+    /* WhatsApp Message Buttons */
+    .wa-messages{padding:12px 16px;border-top:1px solid #f0f0f0;display:flex;flex-wrap:wrap;gap:8px}
+    .wa-msg-btn{display:inline-flex;align-items:center;gap:6px;padding:10px 14px;font-size:12px;font-weight:500;border:1px solid #25d366;background:#fff;color:#25d366;border-radius:20px;cursor:pointer}
+    .wa-msg-btn svg{width:16px;height:16px}
+    .wa-msg-btn:active{background:#f0fdf4}
+    .wa-msg-btn.sent{background:#dcfce7;border-color:#16a34a;color:#16a34a}
+    .wa-msg-btn.sent::after{content:" ✓";font-size:11px}
+    .wa-msg-btn.thank-you{border-color:#2563eb;color:#2563eb}
+    .wa-msg-btn.thank-you:active{background:#eff6ff}
+    .wa-msg-btn.thank-you.sent{background:#dbeafe;border-color:#1d4ed8;color:#1d4ed8}
+
+    /* Empty State */
+    .empty-state{text-align:center;padding:60px 20px}
+    .empty-icon{width:64px;height:64px;background:#eff6ff;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 16px}
+    .empty-icon svg{width:28px;height:28px;color:#2563eb}
+    .empty-state h3{font-size:16px;color:#111;margin-bottom:4px}
+    .empty-state p{font-size:14px;color:#666}
+
+    /* Loading */
+    .spinner{width:24px;height:24px;border:3px solid #eee;border-top-color:#2563eb;border-radius:50%;animation:spin 0.8s linear infinite;margin:0 auto}
+    @keyframes spin{to{transform:rotate(360deg)}}
+
+    .hidden{display:none!important}
+  </style>
+</head>
+<body>
+
+<!-- Login View -->
+<div id="login-view">
+  <div class="header">
+    <div>
+      <h1>Driver Portal</h1>
+      <div class="subtitle">Thanal Milestone CDC</div>
+    </div>
+  </div>
+  <div class="main">
+    <div class="login-card">
+      <div class="login-title">Driver Login</div>
+      <div class="login-subtitle">Enter your mobile and password</div>
+      <div id="login-error" class="login-error"></div>
+      <div class="field">
+        <label class="field-label">Mobile Number</label>
+        <input type="tel" id="login-mobile" class="field-input" placeholder="e.g. 77663378" maxlength="8" inputmode="numeric">
+      </div>
+      <div class="field">
+        <label class="field-label">Password</label>
+        <input type="password" id="login-password" class="field-input" placeholder="Enter password">
+      </div>
+      <button class="login-btn" id="login-btn" onclick="handleLogin()">Login</button>
+    </div>
+  </div>
+</div>
+
+<!-- Dashboard View -->
+<div id="dashboard-view" class="hidden">
+  <div class="header">
+    <div class="header-content">
+      <div>
+        <h1 id="driver-name">Driver</h1>
+        <div class="subtitle" id="driver-id">V001</div>
+      </div>
+      <button class="logout-btn" onclick="handleLogout()">Logout</button>
+    </div>
+  </div>
+
+  <div class="summary-bar">
+    <div class="summary-item">
+      <div class="summary-value" id="total-orders">0</div>
+      <div class="summary-label">Orders</div>
+    </div>
+    <div class="summary-item">
+      <div class="summary-value" id="total-biriyani">0</div>
+      <div class="summary-label">Biriyani</div>
+    </div>
+    <div class="summary-item">
+      <div class="summary-value" id="total-amount">0</div>
+      <div class="summary-label">To Collect</div>
+    </div>
+    <div class="summary-item">
+      <div class="summary-value green" id="total-collected">0</div>
+      <div class="summary-label">Collected</div>
+    </div>
+  </div>
+  <div class="status-counts">
+    <span class="scount assigned" onclick="quickFilter('Assigned')"><span id="cnt-assigned">0</span> Assigned</span>
+    <span class="scount out" onclick="quickFilter('Out for Delivery')"><span id="cnt-out">0</span> Out</span>
+    <span class="scount delivered" onclick="quickFilter('Delivered')"><span id="cnt-delivered">0</span> Delivered</span>
+    <span class="scount collected" onclick="quickFilter('Collected')"><span id="cnt-collected">0</span> Collected</span>
+  </div>
+
+  <div class="search-bar">
+    <input type="text" id="search-input" class="search-input" placeholder="Search by name, phone, area..." oninput="filterDriverOrders()">
+    <select id="filter-status" class="filter-select" onchange="filterDriverOrders()">
+      <option value="">All Status</option>
+      <option value="Assigned">Assigned</option>
+      <option value="Out for Delivery">Out for Delivery</option>
+      <option value="Delivered">Delivered</option>
+      <option value="Collected">Collected</option>
+    </select>
+  </div>
+
+  <div class="main">
+    <div id="orders-loading" class="empty-state">
+      <div class="spinner"></div>
+      <p style="margin-top:12px">Loading orders...</p>
+    </div>
+
+    <div id="orders-list"></div>
+
+    <div id="orders-empty" class="empty-state hidden">
+      <div class="empty-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 7H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+      </div>
+      <h3>No Orders Assigned</h3>
+      <p>You don't have any orders yet</p>
+    </div>
+  </div>
+</div>
+
+<script src="/assets/frappe/js/lib/jquery/jquery.min.js"></script>
+<script>
+if (typeof frappe === 'undefined') {
+  window.frappe = {
+    call: function(opts) {
+      return new Promise((resolve, reject) => {
+        $.ajax({
+          url: '/api/method/' + opts.method,
+          type: 'POST',
+          data: opts.args || {},
+          dataType: 'json',
+          success: function(data) { resolve(data); },
+          error: function(xhr, status, error) { reject(error); }
+        });
+      });
+    }
+  };
+}
+
+let currentDriver = null;
+let perBiriyaniCharge = 20;
+let eventDate = 'Friday, 13 February 2026';
+let allOrders = [];
+let expandedOrders = new Set();
+
+async function handleLogin() {
+  const mobile = document.getElementById('login-mobile').value.trim();
+  const password = document.getElementById('login-password').value;
+  const btn = document.getElementById('login-btn');
+  const errorDiv = document.getElementById('login-error');
+
+  if (!mobile || !password) {
+    errorDiv.textContent = 'Please enter mobile and password';
+    errorDiv.classList.add('show');
+    return;
+  }
+
+  btn.disabled = true;
+  btn.textContent = 'Logging in...';
+  errorDiv.classList.remove('show');
+
+  try {
+    const res = await frappe.call({
+      method: 'foodcharity.api.driver_login',
+      args: { mobile, password }
+    });
+
+    if (res.message?.success) {
+      currentDriver = res.message.driver;
+      localStorage.setItem('driver_session', JSON.stringify(currentDriver));
+      showDashboard();
+    } else {
+      errorDiv.textContent = res.message?.error || 'Login failed';
+      errorDiv.classList.add('show');
+    }
+  } catch (e) {
+    errorDiv.textContent = 'Login failed. Please try again.';
+    errorDiv.classList.add('show');
+  }
+
+  btn.disabled = false;
+  btn.textContent = 'Login';
+}
+
+async function showDashboard() {
+  document.getElementById('login-view').classList.add('hidden');
+  document.getElementById('dashboard-view').classList.remove('hidden');
+  document.getElementById('driver-name').textContent = currentDriver.name;
+  document.getElementById('driver-id').textContent = currentDriver.id;
+
+  // Load event settings
+  try {
+    const res = await frappe.call({ method: 'foodcharity.api.get_event_settings' });
+    if (res.message?.date) {
+      eventDate = res.message.date;
+    }
+  } catch (e) {}
+
+  loadOrders();
+}
+
+async function loadOrders() {
+  const list = document.getElementById('orders-list');
+  const loading = document.getElementById('orders-loading');
+  const empty = document.getElementById('orders-empty');
+
+  list.innerHTML = '';
+  loading.classList.remove('hidden');
+  empty.classList.add('hidden');
+
+  try {
+    const res = await frappe.call({
+      method: 'foodcharity.api.get_driver_orders',
+      args: { driver_id: currentDriver.id }
+    });
+
+    const data = res.message || {};
+    allOrders = data.orders || [];
+    perBiriyaniCharge = data.per_biriyani_charge || 20;
+
+    updateDriverSummary();
+    renderFilteredOrders();
+  } catch (e) {
+    console.error('Load orders error:', e);
+    list.innerHTML = '<p style="text-align:center;color:#666;padding:20px">Error loading orders</p>';
+  }
+
+  loading.classList.add('hidden');
+}
+
+function updateDriverSummary() {
+  let totalBiriyani = 0, totalAmount = 0, totalCollected = 0;
+  const statusCounts = { 'Assigned': 0, 'Out for Delivery': 0, 'Delivered': 0, 'Collected': 0 };
+
+  allOrders.forEach(o => {
+    totalBiriyani += o.no_of_biriyani || 0;
+    totalAmount += o.total_amount || 0;
+    totalCollected += o.collected_amount || 0;
+    const status = o.order_status || 'Assigned';
+    statusCounts[status] = (statusCounts[status] || 0) + 1;
+  });
+
+  document.getElementById('total-orders').textContent = allOrders.length;
+  document.getElementById('total-biriyani').textContent = totalBiriyani;
+  document.getElementById('total-amount').textContent = totalAmount;
+  document.getElementById('total-collected').textContent = totalCollected;
+
+  document.getElementById('cnt-assigned').textContent = statusCounts['Assigned'];
+  document.getElementById('cnt-out').textContent = statusCounts['Out for Delivery'];
+  document.getElementById('cnt-delivered').textContent = statusCounts['Delivered'];
+  document.getElementById('cnt-collected').textContent = statusCounts['Collected'];
+}
+
+function renderFilteredOrders() {
+  const list = document.getElementById('orders-list');
+  const empty = document.getElementById('orders-empty');
+  const searchQuery = (document.getElementById('search-input')?.value || '').toLowerCase().trim();
+  const statusFilter = document.getElementById('filter-status')?.value || '';
+
+  let filtered = allOrders;
+
+  if (statusFilter) {
+    filtered = filtered.filter(o => (o.order_status || 'Assigned') === statusFilter);
+  }
+
+  if (searchQuery) {
+    filtered = filtered.filter(o =>
+      (o.name1 || '').toLowerCase().includes(searchQuery) ||
+      (o.mobile || '').includes(searchQuery) ||
+      (o.name || '').toLowerCase().includes(searchQuery) ||
+      (o.accommodation_area || '').toLowerCase().includes(searchQuery)
+    );
+  }
+
+  if (filtered.length === 0) {
+    empty.classList.remove('hidden');
+    list.innerHTML = '';
+  } else {
+    empty.classList.add('hidden');
+    list.innerHTML = filtered.map(o => renderOrder(o)).join('');
+  }
+}
+
+function filterDriverOrders() {
+  renderFilteredOrders();
+}
+
+function quickFilter(status) {
+  document.getElementById('filter-status').value = status;
+  document.getElementById('search-input').value = '';
+  renderFilteredOrders();
+}
+
+function toggleCard(orderId) {
+  const card = document.getElementById('order-' + orderId);
+  if (card) {
+    card.classList.toggle('collapsed');
+    if (card.classList.contains('collapsed')) {
+      expandedOrders.delete(orderId);
+    } else {
+      expandedOrders.add(orderId);
+    }
+  }
+}
+
+function renderOrder(order) {
+  const address = [
+    order.accommodation_area,
+    order.zone_number ? `Zone ${order.zone_number}` : '',
+    order.street_number ? `Street ${order.street_number}` : '',
+    order.building_number ? `Bldg ${order.building_number}` : '',
+    order.door_number ? `Door ${order.door_number}` : ''
+  ].filter(Boolean).join(', ');
+
+  const hasCoord = order.coordinate && order.coordinate.includes(',');
+  const coord = hasCoord ? order.coordinate.split(',').map(c => c.trim()) : null;
+  const totalAmount = order.total_amount || 0;
+  const collected = order.collected_amount || 0;
+  const extra = collected > totalAmount ? collected - totalAmount : 0;
+  const pending = collected < totalAmount ? totalAmount - collected : 0;
+  const locationSent = order.location_request_sent ? 1 : 0;
+  const thankYouSent = order.thank_you_sent ? 1 : 0;
+  const waPhone = order.whatsapp_number || order.mobile || '';
+
+  return `
+    <div class="order-card ${expandedOrders.has(order.name) ? '' : 'collapsed'}" id="order-${order.name}">
+      <div class="order-header" onclick="toggleCard('${order.name}')">
+        <div class="order-header-top">
+          <span class="order-name">${order.name1 || 'No Name'}</span>
+          <span class="status-badge ${(order.order_status || 'pending').toLowerCase().replace(/ /g, '-')}">${order.order_status || 'Pending'}</span>
+        </div>
+        <div class="order-meta">
+          <span class="order-meta-item" style="color:#2563eb;font-weight:500">${order.name}</span>
+          <span class="order-meta-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72"/></svg>
+            ${order.mobile || '-'}
+          </span>
+          ${order.no_of_biriyani ? `<span class="order-meta-item"><strong>${order.no_of_biriyani}</strong>&nbsp;Biriyani | QAR ${totalAmount}</span>` : ''}
+        </div>
+        <button class="expand-btn" onclick="event.stopPropagation();toggleCard('${order.name}')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 9l-7 7-7-7"/></svg>
+        </button>
+      </div>
+
+      ${address ? `
+      <div class="order-address">
+        <div class="address-label">Delivery Address</div>
+        <div class="address-text">${address}</div>
+      </div>` : ''}
+
+      <div class="order-amount">
+        <div class="amount-row">
+          <span class="amount-label">${order.no_of_biriyani || 0} x QAR ${perBiriyaniCharge}</span>
+          <span class="amount-value total">QAR ${totalAmount}</span>
+        </div>
+        <div class="amount-row">
+          <span class="amount-label">Collected</span>
+          <span class="amount-value">${collected > 0 ? 'QAR ' + collected : '-'}</span>
+        </div>
+        ${extra > 0 ? `<div class="amount-row"><span class="amount-label">Extra Paid</span><span class="amount-value extra">+QAR ${extra}</span></div>` : ''}
+        ${pending > 0 && collected > 0 ? `<div class="amount-row"><span class="amount-label">Pending</span><span class="amount-value pending">QAR ${pending}</span></div>` : ''}
+
+        <div class="collection-row">
+          <input type="number" class="collection-input" id="collect-${order.name}" placeholder="Enter amount" value="${collected || ''}" inputmode="decimal">
+          <button class="save-btn" onclick="saveCollection('${order.name}')" id="save-${order.name}">Save</button>
+        </div>
+      </div>
+
+      <div class="wa-messages">
+        <button class="wa-msg-btn ${locationSent ? 'sent' : ''}" onclick="sendLocationRequest('${order.name}', '${waPhone}', '${order.name1 || ''}', ${order.no_of_biriyani || 0}, ${totalAmount})">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+          Request Location
+        </button>
+        <button class="wa-msg-btn" onclick="sendConfirmOrder('${order.name}', '${waPhone}', '${order.name1 || ''}', ${order.no_of_biriyani || 0}, ${totalAmount})">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+          Confirm Order
+        </button>
+        ${collected > 0 ? `
+        <button class="wa-msg-btn thank-you ${thankYouSent ? 'sent' : ''}" onclick="sendThankYou('${order.name}', '${waPhone}', '${order.name1 || ''}', ${collected})">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+          Thank You
+        </button>` : ''}
+      </div>
+
+      <div class="remark-section">
+        <div class="remark-label">Remark</div>
+        <textarea class="remark-input" rows="2" placeholder="Add notes about this order..." onblur="saveRemark('${order.name}', this.value)">${order.remark || ''}</textarea>
+      </div>
+
+      <div class="status-actions">
+        ${order.order_status !== 'Out for Delivery' && order.order_status !== 'Delivered' && order.order_status !== 'Collected' ?
+          `<button class="status-btn out" onclick="updateStatus('${order.name}', 'Out for Delivery')">Start Delivery</button>` : ''}
+        ${order.order_status === 'Out for Delivery' ?
+          `<button class="status-btn delivered" onclick="updateStatus('${order.name}', 'Delivered')">Mark Delivered</button>` : ''}
+        ${order.order_status === 'Delivered' && collected > 0 ?
+          `<button class="status-btn collected" onclick="updateStatus('${order.name}', 'Collected')">Mark Collected</button>` : ''}
+        ${order.order_status === 'Collected' ? `<span style="color:#047857;font-weight:600">Completed</span>` : ''}
+      </div>
+
+      <div class="order-actions">
+        ${hasCoord ? `<button class="action-btn map" onclick="openMap('${coord[0]}', '${coord[1]}')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>Map</button>` : ''}
+        <button class="action-btn call" onclick="callCustomer('${order.mobile}')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72"/></svg>Call</button>
+        <button class="action-btn whatsapp" onclick="whatsappCustomer('${waPhone}')"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>WhatsApp</button>
+      </div>
+    </div>`;
+}
+
+async function saveCollection(orderId) {
+  const input = document.getElementById('collect-' + orderId);
+  const btn = document.getElementById('save-' + orderId);
+  const amount = parseFloat(input.value) || 0;
+
+  btn.disabled = true;
+  btn.textContent = 'Saving...';
+
+  try {
+    const res = await frappe.call({
+      method: 'foodcharity.api.update_collected_amount',
+      args: { order_id: orderId, collected_amount: amount }
+    });
+
+    if (res.message?.success) {
+      btn.textContent = 'Saved!';
+      btn.classList.add('saved');
+      setTimeout(() => {
+        btn.textContent = 'Save';
+        btn.classList.remove('saved');
+        btn.disabled = false;
+      }, 1500);
+      loadOrders(); // Refresh to update totals
+    } else {
+      alert('Failed to save');
+      btn.disabled = false;
+      btn.textContent = 'Save';
+    }
+  } catch (e) {
+    alert('Error saving');
+    btn.disabled = false;
+    btn.textContent = 'Save';
+  }
+}
+
+function openMap(lat, lng) {
+  // Swap if lat > 40 (means it's actually longitude for Qatar)
+  if (parseFloat(lat) > 40) {
+    window.open(`https://www.google.com/maps?q=${lng},${lat}`, '_blank');
+  } else {
+    window.open(`https://www.google.com/maps?q=${lat},${lng}`, '_blank');
+  }
+}
+
+function getWhatsAppNumber(phone) {
+  let num = phone.replace(/[^0-9]/g, '');
+  if (!num.startsWith('974') && !num.startsWith('91') && num.length <= 8) num = '974' + num;
+  return num;
+}
+
+async function sendLocationRequest(orderId, phone, name, qty, amount) {
+  const num = getWhatsAppNumber(phone);
+  const message = `Hello ${name},\n\nThis is from Thanal Milestone CDC - Biriyani Challenge 2026.\n\nYour order details:\n- Biriyani: ${qty} pcs\n- Amount: QAR ${amount}\n\nI will be delivering your order on ${eventDate}. Please share your location so we can deliver it to you.\n\nThank you`;
+
+  window.open(`https://wa.me/${num}?text=${encodeURIComponent(message)}`, '_blank');
+
+  // Mark as sent
+  await frappe.call({
+    method: 'foodcharity.api.update_message_status',
+    args: { order_id: orderId, field: 'location_request_sent', value: 1 }
+  });
+  loadOrders();
+}
+
+async function sendConfirmOrder(orderId, phone, name, qty, amount) {
+  const num = getWhatsAppNumber(phone);
+  const message = `Hello ${name},\n\nThis is from Thanal Milestone CDC - Biriyani Challenge 2026.\n\nYour order details:\n- Biriyani: ${qty} pcs\n- Amount: QAR ${amount}\n\nI will be delivering your order on ${eventDate}. Please share your location.\n\nThank you`;
+
+  window.open(`https://wa.me/${num}?text=${encodeURIComponent(message)}`, '_blank');
+}
+
+async function sendThankYou(orderId, phone, name, collected) {
+  const num = getWhatsAppNumber(phone);
+  const message = `Hello ${name},\n\nThank you for your contribution of QAR ${collected} to Thanal Milestone CDC - Biriyani Challenge 2026.\n\nMay God bless you and your family!\n\nThank you`;
+
+  window.open(`https://wa.me/${num}?text=${encodeURIComponent(message)}`, '_blank');
+
+  // Mark as sent
+  await frappe.call({
+    method: 'foodcharity.api.update_message_status',
+    args: { order_id: orderId, field: 'thank_you_sent', value: 1 }
+  });
+  loadOrders();
+}
+
+async function updateStatus(orderId, status) {
+  try {
+    const res = await frappe.call({
+      method: 'foodcharity.api.update_order_status',
+      args: { order_id: orderId, status: status }
+    });
+    if (res.message?.success) {
+      loadOrders();
+    } else {
+      alert('Failed to update status');
+    }
+  } catch (e) {
+    alert('Error updating status');
+  }
+}
+
+async function saveRemark(orderId, remark) {
+  try {
+    await frappe.call({
+      method: 'foodcharity.api.update_order_remark',
+      args: { order_id: orderId, remark: remark }
+    });
+  } catch (e) {
+    console.error('Error saving remark');
+  }
+}
+
+function callCustomer(phone) {
+  if (phone) window.location.href = 'tel:' + phone;
+}
+
+function whatsappCustomer(phone) {
+  if (phone) {
+    let num = phone.replace(/[^0-9]/g, '');
+    if (!num.startsWith('974') && num.length <= 8) num = '974' + num;
+    window.open('https://wa.me/' + num, '_blank');
+  }
+}
+
+function handleLogout() {
+  currentDriver = null;
+  localStorage.removeItem('driver_session');
+  document.getElementById('dashboard-view').classList.add('hidden');
+  document.getElementById('login-view').classList.remove('hidden');
+  document.getElementById('login-mobile').value = '';
+  document.getElementById('login-password').value = '';
+}
+
+function checkSession() {
+  const session = localStorage.getItem('driver_session');
+  if (session) {
+    try {
+      currentDriver = JSON.parse(session);
+      showDashboard();
+    } catch (e) {
+      localStorage.removeItem('driver_session');
+    }
+  }
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+  checkSession();
+  document.getElementById('login-password').addEventListener('keypress', function(e) {
+    if (e.key === 'Enter') handleLogin();
+  });
+  document.getElementById('login-mobile').addEventListener('keypress', function(e) {
+    if (e.key === 'Enter') document.getElementById('login-password').focus();
+  });
+});
+</script>
+
+</body>
+</html>
