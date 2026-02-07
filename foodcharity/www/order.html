@@ -318,24 +318,48 @@
 </div>
 
 <script src="/assets/frappe/js/lib/jquery/jquery.min.js"></script>
+<script>window.frappe = window.frappe || {};</script>
+<!-- csrf_token -->
 <script>
-// Simple frappe.call implementation for standalone pages
-if (typeof frappe === 'undefined') {
-  window.frappe = {
-    call: function(opts) {
-      return new Promise((resolve, reject) => {
-        $.ajax({
-          url: '/api/method/' + opts.method,
-          type: 'POST',
-          data: opts.args || {},
-          dataType: 'json',
-          success: function(data) { resolve(data); },
-          error: function(xhr, status, error) { reject(error); }
+// API wrapper that works for both guest and logged-in users
+(function() {
+  window.frappe.call = function(opts) {
+    return new Promise(function(resolve, reject) {
+      var headers = { 'Accept': 'application/json' };
+
+      // Add CSRF token if available (logged-in users)
+      if (window.frappe && window.frappe.csrf_token) {
+        headers['X-Frappe-CSRF-Token'] = window.frappe.csrf_token;
+      }
+
+      // Build URL-encoded form data
+      var params = new URLSearchParams();
+      if (opts.args) {
+        Object.keys(opts.args).forEach(function(key) {
+          var val = opts.args[key];
+          if (val !== null && val !== undefined) {
+            params.append(key, typeof val === 'object' ? JSON.stringify(val) : val);
+          }
         });
-      });
-    }
+      }
+
+      fetch('/api/method/' + opts.method, {
+        method: 'POST',
+        headers: headers,
+        body: params,
+        credentials: 'include'
+      })
+      .then(function(response) {
+        if (!response.ok) {
+          throw new Error('Request failed: ' + response.status);
+        }
+        return response.json();
+      })
+      .then(function(data) { resolve(data); })
+      .catch(function(error) { reject(error); });
+    });
   };
-}
+})();
 </script>
 <script>
 let doctypeFields = [];
@@ -562,7 +586,7 @@ function setupEvents() {
       const bf = document.getElementById('field-no_of_biriyani'), bi = document.getElementById('no_of_biriyani');
       if (bf && bi) { bf.classList.toggle('hidden', isContrib); bi.required = needsBiriyani; const lbl = bf.querySelector('.field-label'); if (lbl) lbl.innerHTML = 'No of Biriyani' + (needsBiriyani ? '<span class="req">*</span>' : ''); }
       const cf = document.getElementById('field-contribution_amount'), ci = document.getElementById('contribution_amount');
-      if (cf && ci) { cf.classList.toggle('hidden', !isContrib); ci.required = isContrib; const lbl = cf.querySelector('.field-label'); if (lbl) lbl.innerHTML = 'Contribution Amount' + (isContrib ? '<span class="req">*</span>' : ''); }
+      if (cf && ci) { cf.classList.toggle('hidden', !isContrib); ci.required = isContrib; const lbl = cf.querySelector('.field-label'); if (lbl) lbl.innerHTML = 'Contribution Amount (QAR)' + (isContrib ? '<span class="req">*</span>' : ''); }
       updateVisibility();
     });
   }
@@ -631,7 +655,14 @@ async function handleSubmit(e) {
   if (data.whatsapp_number && !data.whatsapp_number.startsWith('+')) data.whatsapp_number = whatsappCC + data.whatsapp_number;
   const orderType = data.order_type, isDelivery = orderType === 'Delivery', isContrib = orderType === 'Contribution Only', needsBiriyani = orderType === 'Delivery' || orderType === 'Self Pickup';
   const errors = [];
-  if (!data.name1) errors.push('Name required'); if (!document.getElementById('mobile').value) errors.push('Mobile required'); if (!document.getElementById('whatsapp_number').value) errors.push('WhatsApp required'); if (!orderType) errors.push('Order Type required');
+  if (!data.name1) errors.push('Name required');
+  var mobileVal = document.getElementById('mobile').value.replace(/\D/g, '');
+  if (!mobileVal) errors.push('Mobile required'); else if (mobileVal.length !== 8) errors.push('Mobile must be 8 digits');
+  var waVal = document.getElementById('whatsapp_number').value.replace(/\D/g, '');
+  var waCC = document.getElementById('whatsapp_cc')?.value || '+974';
+  var waLen = waCC === '+91' ? 10 : 8;
+  if (!waVal) errors.push('WhatsApp required'); else if (waVal.length !== waLen) errors.push('WhatsApp must be ' + waLen + ' digits');
+  if (!orderType) errors.push('Order Type required');
   if (needsBiriyani && !data.no_of_biriyani) errors.push('No of Biriyani required'); if (isContrib && !data.contribution_amount) errors.push('Contribution Amount required');
   data.zone_number = manualMode.zone ? document.getElementById('zone_number_manual').value.trim() : document.getElementById('zone_number').value;
   data.street_number = manualMode.street ? document.getElementById('street_number_manual').value.trim() : document.getElementById('street_number').value;
