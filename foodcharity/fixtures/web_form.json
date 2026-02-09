@@ -668,7 +668,7 @@
   "name": "milestone-eicd-school",
   "print_format": null,
   "published": 0,
-  "route": "order-old",
+  "route": "orders-old",
   "show_attachments": 0,
   "show_list": 0,
   "show_sidebar": 0,
