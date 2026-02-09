@@ -540,7 +540,7 @@ function renderFields() {
 function createField(field) {
   const div = document.createElement('div');
   div.className = 'field'; div.id = `field-${field.fieldname}`;
-  const showRequired = field.reqd || ['accommodation_area', 'accommodation_type'].includes(field.fieldname);
+  const showRequired = field.reqd || ['accommodation_area'].includes(field.fieldname);
   if (field.fieldname === 'contribution_amount') div.classList.add('hidden');
   // Custom label for contact_number
   let fieldLabel = field.label;
@@ -688,8 +688,7 @@ async function handleSubmit(e) {
   }
 
   if (isDelivery) {
-    if (!data.accommodation_area) errors.push('Area required'); if (!data.zone_number) errors.push('Zone required'); if (!data.street_number) errors.push('Street required'); if (!data.building_number) errors.push('Building required'); if (!data.accommodation_type) errors.push('Accommodation Type required');
-    if (data.accommodation_type === 'Villa Compound' && !data.compound_name) errors.push('Compound Name required');
+    if (!data.accommodation_area) errors.push('Area required');
   }
   if (errors.length > 0) { errDiv.textContent = errors.join(', '); errDiv.classList.add('show'); btn.disabled = false; btn.textContent = editingOrderId ? 'Update Order' : 'Place Order'; return; }
   data.delivery_needed = isDelivery ? 'Yes' : 'No';
