@@ -293,6 +293,7 @@
           <th>Phone</th>
           <th>Area</th>
           <th>Qty</th>
+          <th>Contrib</th>
           <th>Status</th>
           <th>Driver</th>
           <th>Remark</th>
@@ -513,6 +514,7 @@ function renderOrders() {
       <td>${o.mobile || '-'}</td>
       <td>${o.accommodation_area || '-'}</td>
       <td><strong>${o.no_of_biriyani || 0}</strong></td>
+      <td>${o.contribution_amount || 0}</td>
       <td><span class="status-badge ${statusClass}">${status}</span></td>
       <td>
         <select class="driver-select" onchange="assignOrder('${o.name}', this.value)">
@@ -547,7 +549,7 @@ function renderOrders() {
         <span class="status-badge ${statusClass}">${status}</span>
       </div>
       <div class="order-card-details">
-        <span class="order-card-id">${o.name}</span> | ${o.mobile || '-'} | ${o.accommodation_area || '-'} | <strong>${o.no_of_biriyani || 0} Biriyani</strong>
+        <span class="order-card-id">${o.name}</span> | ${o.mobile || '-'} | ${o.accommodation_area || '-'} | <strong>${o.no_of_biriyani || 0} Biriyani</strong> | QAR ${o.contribution_amount || 0}
       </div>
       <div class="order-card-actions">
         <input type="checkbox" class="order-card-checkbox" value="${o.name}" onchange="toggleOrderSelect(this)" ${selectedOrders.has(o.name) ? 'checked' : ''}>
