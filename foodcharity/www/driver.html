@@ -152,6 +152,22 @@
     .spinner{width:24px;height:24px;border:3px solid #eee;border-top-color:#2563eb;border-radius:50%;animation:spin 0.8s linear infinite;margin:0 auto}
     @keyframes spin{to{transform:rotate(360deg)}}
 
+    /* QR Code Styles */
+    .qr-section{padding:12px 16px;border-top:1px solid #f0f0f0;display:flex;align-items:center;gap:12px;background:#f0fdf4}
+    .qr-code{width:60px;height:60px;border:1px solid #ddd;border-radius:4px}
+    .qr-info{flex:1}
+    .qr-label{font-size:11px;color:#16a34a;font-weight:600;text-transform:uppercase}
+    .qr-hint{font-size:12px;color:#666}
+    .all-routes-btn{display:flex;align-items:center;justify-content:center;gap:8px;padding:12px 16px;background:#16a34a;color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;margin:12px 16px}
+    .all-routes-btn svg{width:20px;height:20px}
+    .all-routes-btn:active{background:#15803d}
+    .qr-modal{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.7);display:flex;align-items:center;justify-content:center;z-index:1000}
+    .qr-modal-content{background:#fff;padding:24px;border-radius:12px;text-align:center;max-width:300px}
+    .qr-modal-content img{width:200px;height:200px;margin-bottom:12px}
+    .qr-modal-content h3{font-size:16px;margin-bottom:8px}
+    .qr-modal-content p{font-size:13px;color:#666;margin-bottom:16px}
+    .qr-modal-close{padding:10px 24px;background:#2563eb;color:#fff;border:none;border-radius:6px;font-size:14px;cursor:pointer}
+
     .hidden{display:none!important}
   </style>
 </head>
@@ -230,6 +246,11 @@
       <option value="Collected">Collected</option>
     </select>
   </div>
+
+  <button class="all-routes-btn" id="all-routes-btn" onclick="showAllRoutesQR()">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+    All Locations Route QR
+  </button>
 
   <div class="main">
     <div id="orders-loading" class="empty-state">
@@ -480,6 +501,15 @@ function renderOrder(order) {
         <div class="address-text">${address}</div>
       </div>` : ''}
 
+      ${hasCoord ? `
+      <div class="qr-section">
+        <img class="qr-code" src="https://api.qrserver.com/v1/create-qr-code/?size=60x60&data=${encodeURIComponent(getMapUrl(coord[0], coord[1]))}" alt="Location QR">
+        <div class="qr-info">
+          <div class="qr-label">Location QR Code</div>
+          <div class="qr-hint">Scan to open in Google Maps</div>
+        </div>
+      </div>` : ''}
+
       <div class="order-amount">
         <div class="amount-row">
           <span class="amount-label">${order.no_of_biriyani || 0} x QAR ${perBiriyaniCharge}</span>
@@ -572,13 +602,56 @@ async function saveCollection(orderId) {
   }
 }
 
-function openMap(lat, lng) {
+function getMapUrl(lat, lng) {
   // Swap if lat > 40 (means it's actually longitude for Qatar)
   if (parseFloat(lat) > 40) {
-    window.open(`https://www.google.com/maps?q=${lng},${lat}`, '_blank');
+    return `https://www.google.com/maps?q=${lng},${lat}`;
   } else {
-    window.open(`https://www.google.com/maps?q=${lat},${lng}`, '_blank');
+    return `https://www.google.com/maps?q=${lat},${lng}`;
   }
+}
+
+function openMap(lat, lng) {
+  window.open(getMapUrl(lat, lng), '_blank');
+}
+
+function showAllRoutesQR() {
+  const coords = [];
+  allOrders.forEach(order => {
+    if (order.coordinate && order.coordinate.includes(',')) {
+      const parts = order.coordinate.split(',').map(c => c.trim());
+      let lat = parts[0], lng = parts[1];
+      if (parseFloat(lat) > 40) {
+        const temp = lat; lat = lng; lng = temp;
+      }
+      coords.push(`${lat},${lng}`);
+    }
+  });
+
+  if (coords.length === 0) {
+    alert('No locations available');
+    return;
+  }
+
+  const routeUrl = 'https://www.google.com/maps/dir/' + coords.join('/');
+  const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(routeUrl)}`;
+
+  const modal = document.createElement('div');
+  modal.className = 'qr-modal';
+  modal.innerHTML = `
+    <div class="qr-modal-content">
+      <img src="${qrUrl}" alt="All Routes QR">
+      <h3>All Locations Route</h3>
+      <p>Scan this QR code to open route with all ${coords.length} delivery locations in Google Maps</p>
+      <button class="qr-modal-close" onclick="this.closest('.qr-modal').remove()">Close</button>
+      <br><br>
+      <button class="qr-modal-close" style="background:#16a34a" onclick="window.open('${routeUrl}', '_blank')">Open in Maps</button>
+    </div>
+  `;
+  modal.addEventListener('click', (e) => {
+    if (e.target === modal) modal.remove();
+  });
+  document.body.appendChild(modal);
 }
 
 function getWhatsAppNumber(phone) {
