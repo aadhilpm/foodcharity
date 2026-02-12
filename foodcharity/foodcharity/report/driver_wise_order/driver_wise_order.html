@@ -22,6 +22,29 @@
             padding-top: 10px;
             border-top: 1px solid #ddd;
         }
+        .qr-code {
+            width: 50px;
+            height: 50px;
+        }
+        .all-locations-qr {
+            text-align: center;
+            margin: 20px 0;
+            padding: 15px;
+            border: 2px solid #333;
+            background: #f9f9f9;
+        }
+        .all-locations-qr img {
+            width: 150px;
+            height: 150px;
+        }
+        .all-locations-qr p {
+            margin-top: 10px;
+            font-weight: bold;
+        }
+        table td, table th {
+            vertical-align: middle !important;
+            font-size: 12px;
+        }
     </style>
     <div class="container">
         <div class="row">
@@ -38,9 +61,34 @@
                 <h2 class="text-center">{%= __("MILESTONE MANIYUR - BIRIYANI CHALLENGE") %}</h2>
             </div>
             <div class="col-xs-4">
-                <div class="empty-box">
-                    <p>Priority</p>
+                {%
+                    var allCoords = [];
+                    for (var j = 0; j < data.length; j++) {
+                        if (data[j].coordinate && data[j].coordinate.includes(',')) {
+                            var coords = data[j].coordinate.split(',');
+                            var lat = coords[0].trim();
+                            var lng = coords[1].trim();
+                            if (parseFloat(lat) > 40) {
+                                var temp = lat; lat = lng; lng = temp;
+                            }
+                            allCoords.push(lat + ',' + lng);
+                        }
+                    }
+                    var allLocationsUrl = '';
+                    if (allCoords.length > 0) {
+                        allLocationsUrl = 'https://www.google.com/maps/dir/' + allCoords.join('/');
+                    }
+                %}
+                {% if (allLocationsUrl) { %}
+                <div class="all-locations-qr">
+                    <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data={%= encodeURIComponent(allLocationsUrl) %}" alt="All Locations QR">
+                    <p>Scan for All Locations Route</p>
                 </div>
+                {% } else { %}
+                <div class="empty-box">
+                    <p>No locations available</p>
+                </div>
+                {% } %}
             </div>
         </div>
     </div>
@@ -48,33 +96,90 @@
     <table class="table table-bordered">
         <thead>
             <tr>
-                <th style="width: 12%">{%= __("Job ID") %}</th>
-                <th style="width: 25%">{%= __("Full Name") %}</th>
-                <th style="width: 10%">{%= __("Mobile") %}</th>
-                <th style="width: 15%">{%= __("Area") %}</th>
-                <th style="width: 10%">{%= __("Area Details Z - S - B") %}</th>
-                <th style="width: 10%">{%= __("No of Biriyani") %}</th>
-                <th style="width: 10%">{%= __("Cost") %}</th>
-                <th style="width: 20%">{%= __("Extra Amount") %}</th>
-                <th style="width: 20%">{%= __("Remark") %}</th>
+                <th style="width: 6%">{%= __("Job ID") %}</th>
+                <th style="width: 14%">{%= __("Full Name") %}</th>
+                <th style="width: 9%">{%= __("Mobile") %}</th>
+                <th style="width: 10%">{%= __("Area") %}</th>
+                <th style="width: 10%">{%= __("Address (Z-S-B-D)") %}</th>
+                <th style="width: 5%">{%= __("Qty") %}</th>
+                <th style="width: 7%">{%= __("Amount") %}</th>
+                <th style="width: 7%">{%= __("Collected") %}</th>
+                <th style="width: 7%">{%= __("Extra") %}</th>
+                <th style="width: 7%">{%= __("Location") %}</th>
+                <th style="width: 18%">{%= __("Remark") %}</th>
             </tr>
         </thead>
         <tbody>
             {% for (var i = 0, l = data.length; i < l; i++) { %}
+                {%
+                    var mapUrl = '';
+                    if (data[i].coordinate && data[i].coordinate.includes(',')) {
+                        var coords = data[i].coordinate.split(',');
+                        var lat = coords[0].trim();
+                        var lng = coords[1].trim();
+                        if (parseFloat(lat) > 40) {
+                            var temp = lat; lat = lng; lng = temp;
+                        }
+                        mapUrl = 'https://www.google.com/maps?q=' + lat + ',' + lng;
+                    }
+                    var totalAmount = (data[i].job_no || 0) * 20;
+                %}
                 <tr>
                     <td>{%= data[i].job_id %}</td>
                     <td>{%= data[i].job_name %}</td>
                     <td>{%= data[i].job_mobile %}</td>
                     <td>{%= data[i].job_area %}</td>
-                    <td>{%= data[i].job_zone %}  {%= data[i].street_number %}  {%= data[i].job_build %} {%= data[i].compound_name %}</td>
-                    <td>{%= data[i].job_no %}</td>
-                    <td style="text-align: right">
-                        {%= format_currency(data[i].totalcost, filters.presentation_currency) %}
+                    <td>
+                        {% if (data[i].job_zone) { %}Z{%= data[i].job_zone %}{% } %}
+                        {% if (data[i].street_number) { %} S{%= data[i].street_number %}{% } %}
+                        {% if (data[i].job_build) { %} B{%= data[i].job_build %}{% } %}
+                        {% if (data[i].door_number) { %} D{%= data[i].door_number %}{% } %}
+                        {% if (data[i].compound_name) { %}<br><small>{%= data[i].compound_name %}</small>{% } %}
                     </td>
-                    <td></td>
-                    <td></td>
+                    <td style="text-align: center">{%= data[i].job_no || 0 %}</td>
+                    <td style="text-align: right">{%= totalAmount %}</td>
+                    <td style="text-align: right"></td>
+                    <td style="text-align: right"></td>
+                    <td style="text-align: center">
+                        {% if (mapUrl) { %}
+                        <img class="qr-code" src="https://api.qrserver.com/v1/create-qr-code/?size=50x50&data={%= encodeURIComponent(mapUrl) %}" alt="QR">
+                        {% } else { %}
+                        -
+                        {% } %}
+                    </td>
+                    <td>{%= data[i].remark || '' %}</td>
                 </tr>
             {% } %}
         </tbody>
-    
     </table>
+
+    <div style="margin-top: 20px; padding: 10px; border-top: 2px solid #333;">
+        {%
+            var totalBiriyani = 0;
+            for (var k = 0; k < data.length; k++) {
+                totalBiriyani += data[k].job_no || 0;
+            }
+        %}
+        <div class="row">
+            <div class="col-xs-3">
+                <strong>Total Orders:</strong> {%= data.length %}
+            </div>
+            <div class="col-xs-3">
+                <strong>Total Biriyani:</strong> {%= totalBiriyani %}
+            </div>
+            <div class="col-xs-3">
+                <strong>Total Amount:</strong> QAR {%= totalBiriyani * 20 %}
+            </div>
+            <div class="col-xs-3">
+                <strong>Total Collected:</strong> _______________
+            </div>
+        </div>
+        <div class="row" style="margin-top: 10px;">
+            <div class="col-xs-6">
+                <strong>Total Extra:</strong> _______________
+            </div>
+            <div class="col-xs-6">
+                <strong>Driver Signature:</strong> _______________
+            </div>
+        </div>
+    </div>

@@ -8,7 +8,7 @@ def execute(filters=None):
             "fieldname": "job_id",
             "fieldtype": "Link",
             "options": "Orders",
-            "width": 120
+            "width": 100
         },
         {
             "label": _("Volunteer"),
@@ -27,37 +27,43 @@ def execute(filters=None):
             "label": _("Full Name"),
             "fieldname": "job_name",
             "fieldtype": "Data",
-            "width": 120
+            "width": 150
         },
         {
             "label": _("Mobile"),
             "fieldname": "job_mobile",
             "fieldtype": "Data",
-            "width": 120
+            "width": 110
         },
         {
             "label": _("Area"),
             "fieldname": "job_area",
             "fieldtype": "Data",
-            "width": 120
+            "width": 130
         },
         {
             "label": _("Zone"),
             "fieldname": "job_zone",
             "fieldtype": "Data",
-            "width": 120
+            "width": 60
         },
         {
             "label": _("Street"),
             "fieldname": "street_number",
             "fieldtype": "Data",
-            "width": 120
+            "width": 60
         },
         {
             "label": _("Building"),
             "fieldname": "job_build",
             "fieldtype": "Data",
-            "width": 120
+            "width": 70
+        },
+        {
+            "label": _("Door"),
+            "fieldname": "door_number",
+            "fieldtype": "Data",
+            "width": 60
         },
         {
             "label": _("Compound Name"),
@@ -66,34 +72,40 @@ def execute(filters=None):
             "width": 120
         },
         {
-            "label": _("Delivery Needed"),
-            "fieldname": "delivery_needed",
-            "fieldtype": "Data",
-            "width": 120
-        },
-        {
             "label": _("No Of Biriyani"),
             "fieldname": "job_no",
             "fieldtype": "Int",
-            "width": 120
+            "width": 100
         },
         {
-            "label": _("Total Cost"),
-            "fieldname": "totalcost",
-            "fieldtype": "Float",
-            "width": 120
+            "label": _("Contribution"),
+            "fieldname": "contribution_amount",
+            "fieldtype": "Currency",
+            "width": 100
+        },
+        {
+            "label": _("Collected"),
+            "fieldname": "collected_amount",
+            "fieldtype": "Currency",
+            "width": 100
         },
         {
             "label": _("Extra Amount"),
-            "fieldname": "extra_amount_received",
+            "fieldname": "extra_amount",
+            "fieldtype": "Currency",
+            "width": 100
+        },
+        {
+            "label": _("Status"),
+            "fieldname": "order_status",
             "fieldtype": "Data",
-            "width": 120
+            "width": 100
         },
         {
             "label": _("Remark"),
             "fieldname": "remark",
             "fieldtype": "Data",
-            "width": 120
+            "width": 150
         }
     ]
 
@@ -109,10 +121,15 @@ def execute(filters=None):
             o.accommodation_area AS job_area,
             o.zone_number AS job_zone,
             o.street_number AS street_number,
-            o.compound_name AS compound_name,
             o.building_number AS job_build,
-            o.delivery_needed,
-            o.no_of_biriyani AS job_no
+            o.door_number AS door_number,
+            o.compound_name AS compound_name,
+            o.no_of_biriyani AS job_no,
+            o.contribution_amount,
+            o.collected_amount,
+            o.order_status,
+            o.remark,
+            o.coordinate
         FROM
             `tabOrders` o
         LEFT JOIN
@@ -120,16 +137,17 @@ def execute(filters=None):
         WHERE
             {conditions}
         ORDER BY
-            o.accommodation_area ASC
+            o.accommodation_area ASC, o.zone_number ASC, o.street_number ASC
     """.format(conditions=conditions)
-    
+
     data = frappe.db.sql(query, values, as_dict=True)
-    
+
+    # Calculate extra amount for each row
     for row in data:
-        row["totalcost"] = row.get("job_no", 0) * 20
-        row["extra_amount_received"] = " " 
-        row["remark"] = ""
-    
+        expected_amount = (row.get("job_no") or 0) * 20
+        collected = row.get("collected_amount") or 0
+        row["extra_amount"] = max(0, collected - expected_amount)
+
     return columns, data
 
 def get_conditions(filters):
