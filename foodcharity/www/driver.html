@@ -465,8 +465,15 @@ function renderOrder(order) {
     order.door_number ? `Door ${order.door_number}` : ''
   ].filter(Boolean).join(', ');
 
-  const hasCoord = order.coordinate && order.coordinate.includes(',');
-  const coord = hasCoord ? order.coordinate.split(',').map(c => c.trim()) : null;
+  let hasCoord = false;
+  let coord = null;
+  if (order.coordinate && order.coordinate.includes(',')) {
+    const parts = order.coordinate.split(',').map(c => c.trim());
+    if (parts[0] && parts[1] && parts[0] !== 'undefined' && parts[1] !== 'undefined') {
+      coord = parts;
+      hasCoord = true;
+    }
+  }
   const totalAmount = order.total_amount || 0;
   const collected = order.collected_amount || 0;
   const extra = collected > totalAmount ? collected - totalAmount : 0;
@@ -603,6 +610,7 @@ async function saveCollection(orderId) {
 }
 
 function getMapUrl(lat, lng) {
+  if (!lat || !lng) return '';
   // Swap if lat > 40 (means it's actually longitude for Qatar)
   if (parseFloat(lat) > 40) {
     return `https://www.google.com/maps?q=${lng},${lat}`;
@@ -621,6 +629,7 @@ function showAllRoutesQR() {
     if (order.coordinate && order.coordinate.includes(',')) {
       const parts = order.coordinate.split(',').map(c => c.trim());
       let lat = parts[0], lng = parts[1];
+      if (!lat || !lng || lat === 'undefined' || lng === 'undefined') return;
       if (parseFloat(lat) > 40) {
         const temp = lat; lat = lng; lng = temp;
       }
