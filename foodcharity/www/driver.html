@@ -162,9 +162,14 @@
     @keyframes spin{to{transform:rotate(360deg)}}
 
     /* All Routes QR Button & Modal */
-    .all-routes-btn{display:flex;align-items:center;justify-content:center;gap:8px;padding:12px 16px;background:#16a34a;color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;margin:12px 16px}
-    .all-routes-btn svg{width:20px;height:20px}
+    .all-routes-btn{display:flex;align-items:center;justify-content:center;gap:8px;padding:12px 16px;background:#16a34a;color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer}
+    .all-routes-btn svg{width:18px;height:18px}
     .all-routes-btn:active{background:#15803d}
+    .sort-route-btn{display:flex;align-items:center;justify-content:center;gap:8px;padding:12px 16px;background:#fff;color:#555;border:1px solid #ddd;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer}
+    .sort-route-btn svg{width:18px;height:18px}
+    .sort-route-btn:active{background:#f5f5f5}
+    .sort-route-btn.active{background:#2563eb;color:#fff;border-color:#2563eb}
+    .sort-route-btn.active:active{background:#1d4ed8}
     .qr-modal{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.7);display:flex;align-items:center;justify-content:center;z-index:1000}
     .qr-modal-content{background:#fff;padding:24px;border-radius:12px;text-align:center;max-width:300px}
     .qr-modal-content img{width:200px;height:200px;margin-bottom:12px}
@@ -251,10 +256,16 @@
     </select>
   </div>
 
-  <button class="all-routes-btn" id="all-routes-btn" onclick="showAllRoutesQR()">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-    All Locations Route QR
-  </button>
+  <div style="display:flex;gap:8px;margin:12px 16px;">
+    <button class="all-routes-btn" style="flex:1;margin:0" id="all-routes-btn" onclick="showAllRoutesQR()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+      Route QR
+    </button>
+    <button class="sort-route-btn" id="sort-route-btn" onclick="toggleSortByRoute()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M3 12h12M3 18h6"/></svg>
+      Sort by Route
+    </button>
+  </div>
 
   <div class="main">
     <div id="orders-loading" class="empty-state">
@@ -299,6 +310,7 @@ let perBiriyaniCharge = 20;
 let eventDate = 'Friday, 13 February 2026';
 let allOrders = [];
 let expandedOrders = new Set();
+let sortByRoute = false;
 
 async function handleLogin() {
   const mobile = document.getElementById('login-mobile').value.trim();
@@ -429,6 +441,11 @@ function renderFilteredOrders() {
     );
   }
 
+  // Sort by route if enabled
+  if (sortByRoute) {
+    filtered = sortOrdersByRoute(filtered);
+  }
+
   if (filtered.length === 0) {
     empty.classList.remove('hidden');
     list.innerHTML = '';
@@ -446,6 +463,67 @@ function quickFilter(status) {
   document.getElementById('filter-status').value = status;
   document.getElementById('search-input').value = '';
   renderFilteredOrders();
+}
+
+function toggleSortByRoute() {
+  sortByRoute = !sortByRoute;
+  const btn = document.getElementById('sort-route-btn');
+  if (sortByRoute) {
+    btn.classList.add('active');
+  } else {
+    btn.classList.remove('active');
+  }
+  renderFilteredOrders();
+}
+
+function sortOrdersByRoute(orders) {
+  // Parse coordinates
+  const withCoords = [];
+  const withoutCoords = [];
+
+  orders.forEach(order => {
+    if (order.coordinate && order.coordinate.includes(',')) {
+      const parts = order.coordinate.split(',').map(c => c.trim());
+      let lat = parseFloat(parts[0]);
+      let lng = parseFloat(parts[1]);
+      if (!isNaN(lat) && !isNaN(lng) && lat && lng) {
+        // Swap if lat > 40 (means it's longitude for Qatar)
+        if (lat > 40) {
+          const temp = lat; lat = lng; lng = temp;
+        }
+        order._lat = lat;
+        order._lng = lng;
+        withCoords.push(order);
+      } else {
+        withoutCoords.push(order);
+      }
+    } else {
+      withoutCoords.push(order);
+    }
+  });
+
+  if (withCoords.length === 0) return orders;
+
+  // Sort by northernmost first
+  withCoords.sort((a, b) => b._lat - a._lat || a._lng - b._lng);
+
+  // Nearest neighbor algorithm
+  const sorted = [withCoords.shift()];
+  while (withCoords.length > 0) {
+    const last = sorted[sorted.length - 1];
+    let nearestIdx = 0;
+    let nearestDist = Infinity;
+    withCoords.forEach((order, idx) => {
+      const dist = Math.sqrt(Math.pow(order._lat - last._lat, 2) + Math.pow(order._lng - last._lng, 2));
+      if (dist < nearestDist) {
+        nearestDist = dist;
+        nearestIdx = idx;
+      }
+    });
+    sorted.push(withCoords.splice(nearestIdx, 1)[0]);
+  }
+
+  return [...sorted, ...withoutCoords];
 }
 
 function toggleCard(orderId) {
