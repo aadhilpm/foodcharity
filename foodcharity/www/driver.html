@@ -311,7 +311,7 @@ let eventDate = 'Friday, 13 February 2026';
 let allOrders = [];
 let expandedOrders = new Set();
 let sortByRoute = false;
-let ordersLocked = true; // Orders are now closed - read only
+let ordersLocked = false; // Orders are open for editing
 
 async function handleLogin() {
   const mobile = document.getElementById('login-mobile').value.trim();
