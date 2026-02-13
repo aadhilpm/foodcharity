@@ -70,14 +70,9 @@
             background: #f0f0f0;
             font-weight: bold;
         }
-        .summary-section {
-            margin-top: 8px;
-            padding: 5px;
-            border-top: 1px solid #333;
+        tfoot td {
             font-size: 9px;
-        }
-        .summary-section strong {
-            font-size: 9px;
+            padding: 4px 3px !important;
         }
         hr {
             margin: 5px 0;
@@ -191,21 +186,28 @@
                 </tr>
             {% } %}
         </tbody>
+        <tfoot>
+            {%
+                var totalBiriyani = 0;
+                for (var k = 0; k < data.length; k++) {
+                    totalBiriyani += data[k].job_no || 0;
+                }
+            %}
+            <tr style="background: #f0f0f0; font-weight: bold;">
+                <td colspan="5" style="text-align: right;">Total ({%= data.length %} orders):</td>
+                <td style="text-align: center;">{%= totalBiriyani %}</td>
+                <td style="text-align: right;">{%= totalBiriyani * 20 %}</td>
+                <td style="text-align: right;"></td>
+                <td style="text-align: right;"></td>
+                <td colspan="2"></td>
+            </tr>
+            <tr>
+                <td colspan="5" style="text-align: right;"><strong>Collected:</strong></td>
+                <td colspan="2" style="border-bottom: 1px solid #333;"></td>
+                <td style="text-align: right;"><strong>Extra:</strong></td>
+                <td style="border-bottom: 1px solid #333;"></td>
+                <td style="text-align: right;"><strong>Sign:</strong></td>
+                <td style="border-bottom: 1px solid #333;"></td>
+            </tr>
+        </tfoot>
     </table>
-
-    <div class="summary-section">
-        {%
-            var totalBiriyani = 0;
-            for (var k = 0; k < data.length; k++) {
-                totalBiriyani += data[k].job_no || 0;
-            }
-        %}
-        <div class="row">
-            <div class="col-xs-2"><strong>Orders:</strong> {%= data.length %}</div>
-            <div class="col-xs-2"><strong>Biriyani:</strong> {%= totalBiriyani %}</div>
-            <div class="col-xs-2"><strong>Amount:</strong> {%= totalBiriyani * 20 %}</div>
-            <div class="col-xs-2"><strong>Collected:</strong> _______</div>
-            <div class="col-xs-2"><strong>Extra:</strong> _______</div>
-            <div class="col-xs-2"><strong>Sign:</strong> _______</div>
-        </div>
-    </div>
