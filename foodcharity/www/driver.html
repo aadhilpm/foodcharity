@@ -311,6 +311,7 @@ let eventDate = 'Friday, 13 February 2026';
 let allOrders = [];
 let expandedOrders = new Set();
 let sortByRoute = false;
+let ordersLocked = true; // Orders are now closed - read only
 
 async function handleLogin() {
   const mobile = document.getElementById('login-mobile').value.trim();
@@ -608,13 +609,13 @@ function renderOrder(order) {
         ${extra > 0 ? `<div class="amount-row"><span class="amount-label">Extra Paid</span><span class="amount-value extra">+QAR ${extra}</span></div>` : ''}
         ${pending > 0 && collected > 0 ? `<div class="amount-row"><span class="amount-label">Pending</span><span class="amount-value pending">QAR ${pending}</span></div>` : ''}
 
-        <div class="collection-row">
+        ${!ordersLocked ? `<div class="collection-row">
           <input type="number" class="collection-input" id="collect-${order.name}" placeholder="Enter amount" value="${collected || ''}" inputmode="decimal">
           <button class="save-btn" onclick="saveCollection('${order.name}')" id="save-${order.name}">Save</button>
-        </div>
+        </div>` : ''}
       </div>
 
-      <div class="wa-messages">
+      ${!ordersLocked ? `<div class="wa-messages">
         <button class="wa-msg-btn ${locationSent ? 'sent' : ''}" onclick="sendLocationRequest('${order.name}', '${waPhone}', '${order.name1 || ''}', ${order.no_of_biriyani || 0}, ${totalAmount})">
           <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
           Request Location
@@ -628,14 +629,14 @@ function renderOrder(order) {
           <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
           Thank You
         </button>` : ''}
-      </div>
+      </div>` : ''}
 
-      <div class="remark-section">
+      ${order.remark ? `<div class="remark-section">
         <div class="remark-label">Remark</div>
-        <textarea class="remark-input" rows="2" placeholder="Add notes about this order..." onblur="saveRemark('${order.name}', this.value)">${order.remark || ''}</textarea>
-      </div>
+        <div class="remark-display">${order.remark}</div>
+      </div>` : ''}
 
-      <div class="status-actions">
+      ${!ordersLocked ? `<div class="status-actions">
         ${order.order_status !== 'Out for Delivery' && order.order_status !== 'Delivered' && order.order_status !== 'Collected' ?
           `<button class="status-btn out" onclick="updateStatus('${order.name}', 'Out for Delivery')">Start Delivery</button>` : ''}
         ${order.order_status === 'Out for Delivery' ?
@@ -643,7 +644,7 @@ function renderOrder(order) {
         ${order.order_status === 'Delivered' && collected > 0 ?
           `<button class="status-btn collected" onclick="updateStatus('${order.name}', 'Collected')">Mark Collected</button>` : ''}
         ${order.order_status === 'Collected' ? `<span style="color:#047857;font-weight:600">Completed</span>` : ''}
-      </div>
+      </div>` : ''}
 
     </div>`;
 }
