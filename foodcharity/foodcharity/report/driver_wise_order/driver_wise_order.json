@@ -1,5 +1,6 @@
 {
- "add_total_row": 1,
+ "add_total_row": 0,
+ "add_translate_data": 0,
  "columns": [],
  "creation": "2024-05-15 13:19:08.872494",
  "disabled": 0,
@@ -8,8 +9,8 @@
  "filters": [],
  "idx": 0,
  "is_standard": "Yes",
- "letterhead": null,
- "modified": "2024-05-16 16:52:53.152479",
+ "letter_head": null,
+ "modified": "2026-02-13 03:04:08.991724",
  "modified_by": "Administrator",
  "module": "Foodcharity",
  "name": "Driver wise order",
@@ -22,5 +23,6 @@
   {
    "role": "System Manager"
   }
- ]
+ ],
+ "timeout": 0
 }
