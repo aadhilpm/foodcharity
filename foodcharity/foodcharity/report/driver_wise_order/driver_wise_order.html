@@ -1,7 +1,24 @@
     <style>
         @media print {
-            @page { margin: 5mm; size: A4 landscape; }
+            @page {
+                margin: 5mm;
+                size: A4 landscape;
+                @bottom-right {
+                    content: "Page " counter(page) " of " counter(pages);
+                    font-size: 9px;
+                }
+            }
             body { margin: 0; padding: 0; }
+        }
+        .page-number {
+            position: fixed;
+            bottom: 5mm;
+            right: 5mm;
+            font-size: 9px;
+            color: #666;
+        }
+        @media screen {
+            .page-number { display: none; }
         }
         .bordered-box {
             border: 1px solid #ccc;
